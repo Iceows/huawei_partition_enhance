@@ -1,6 +1,6 @@
 package com.android.hwgsipartition;
 
-import android.util.Log;
+
 
 class CommandResult {
     final String output;
