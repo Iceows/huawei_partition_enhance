@@ -2,6 +2,7 @@ package com.android.hwgsipartition;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,6 +38,25 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        // Test code: see if we can find the /libs library
+        String libName = "libparted.so";
+
+        ApplicationInfo appInfo = this.getApplicationInfo();
+        String nativeLibsDir = appInfo.nativeLibraryDir;
+        String libPath = nativeLibsDir + "/" + libName;
+
+        // Getting the file by creating object of File class
+        File f = new File(libPath);
+
+        // Checking if the specified file exists or not
+        if (f.exists())
+            // Show if the file exists
+            Log.println(Log.INFO, "ReadGPT", "libparted.so exists");
+        else
+            // Show if the file does not exists
+            Log.println(Log.INFO, "ReadGPT", "libparted.so not exists");
+
+
         btnCreateNew = (Button) findViewById(R.id.btnCreateNewGPT);//get id of button 1
         btnReadPhone = (Button) findViewById(R.id.btnReadPhoneGPT);//get id of button 2
 
@@ -51,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+
+                String nativeLibsDir = getApplicationInfo().nativeLibraryDir;
+                //sMyInitialGPT= objReadWrite.ReadMyGPTPhone(nativeLibsDir);
                 sMyInitialGPT=readFromStorage();
                 Log.println(Log.INFO, "ReadGPT", sMyInitialGPT);
 

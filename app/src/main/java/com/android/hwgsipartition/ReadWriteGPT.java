@@ -9,22 +9,25 @@ import java.io.*;
 
 public class ReadWriteGPT {
 
-    String ReadMyGPTPhone () {
+    String ReadMyGPTPhone (String basedir) {
         try {
             // Executes the command.
             // ./parted /dev/block/mmcblk0 --script unit s print
-            Process process = Runtime.getRuntime().exec("ls /sdcard");
+
+            String command = String.format("%s/libparted.so", basedir);
+            Log.println(Log.INFO, "ReadGPT", "Exec : " + command);
+
+            String[] cmdarray = new String[] {command,"/dev/block/mmcblk0","--script unit s print"};
+            Process process = Runtime.getRuntime().exec( cmdarray );
 
             Log.println(Log.INFO, "ReadGPT", "Début de lecture");
 
             // Reads stdout.
-            // NOTE: You can write to stdin of the command using
-            //       process.getOutputStream().
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             int read;
-            char[] buffer = new char[4096];
+            char[] buffer = new char[8192];
             StringBuffer output = new StringBuffer();
+
             while ((read = reader.read(buffer)) > 0) {
                 output.append(buffer, 0, read);
                 Log.println(Log.INFO, "ReadGPT", buffer.toString());
@@ -40,6 +43,7 @@ public class ReadWriteGPT {
             //return output.toString();
             return output.toString();
         } catch (IOException e) {
+            Log.e("ReadGPT",e.toString());
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -86,8 +90,9 @@ public class ReadWriteGPT {
             }
         }
         catch (IOException e) {
-
-         }
+            Log.println(Log.INFO, "ReadGPT", "Erreur file : " + e.toString());
+            return "";
+        }
 
         return result;
     }
