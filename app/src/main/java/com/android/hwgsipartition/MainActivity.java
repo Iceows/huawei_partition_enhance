@@ -73,7 +73,9 @@ public class MainActivity extends AppCompatActivity {
 
 
                 String nativeLibsDir = getApplicationInfo().nativeLibraryDir;
-                //sMyInitialGPT= objReadWrite.ReadMyGPTPhone(nativeLibsDir);
+                String sMyPartitions= objReadWrite.ReadMyGPTPhone(nativeLibsDir);
+                Log.println(Log.INFO, "ReadGPT", sMyPartitions);
+
                 sMyInitialGPT=readFromStorage();
                 Log.println(Log.INFO, "ReadGPT", sMyInitialGPT);
 
@@ -223,9 +225,9 @@ public class MainActivity extends AppCompatActivity {
         directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
 
         if (iEtape==1)
-            objReadWrite.WriteGPTScript(directory.toString(),"rm-part.txt",szCmd);
+            objReadWrite.WriteGPTScript(directory.toString(),"rm-part.sh",szCmd);
         if (iEtape==2)
-            objReadWrite.WriteGPTScript(directory.toString(),"make-part.txt",szCmd);
+            objReadWrite.WriteGPTScript(directory.toString(),"make-part.sh",szCmd);
 
     }
 }

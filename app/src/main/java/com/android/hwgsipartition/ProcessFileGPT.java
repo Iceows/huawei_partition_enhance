@@ -39,12 +39,14 @@ public class ProcessFileGPT
         iNbFullPart=KeepFullPart(sMyInitialGPT);
 
         if (iNbFullPart>0) {
-            Log.println(Log.INFO, "ReadGPT", "iNbFullPart > 0 ");
+            Log.println(Log.INFO, "ReadGPT", "iNbFullPart > 0 : " + String.valueOf(iNbFullPart));
             iNbModPart=KeepModPart();
             if (iNbModPart>0) {
-                Log.println(Log.INFO, "ReadGPT", "iNbModPart > 0 ");
+                Log.println(Log.INFO, "ReadGPT", "iNbModPart > 0 :" + String.valueOf(iNbModPart));
+                if (iNbModPart!=6)
+                    return false;
                 iNbProcPart=KeepProcPart();
-                Log.println(Log.INFO, "ReadGPT", "iNbProcPart" + String.valueOf(iNbProcPart));
+                Log.println(Log.INFO, "ReadGPT", "iNbProcPart :" + String.valueOf(iNbProcPart));
                 if (iNbProcPart==6) {
                     return true;
                 }
@@ -56,6 +58,9 @@ public class ProcessFileGPT
     public String GeneratedScriptRM() {
         String szClearCmd="";
 
+        szClearCmd = szClearCmd +"#!/sbin/sh \n";
+        szClearCmd = szClearCmd +" \n";
+        szClearCmd = szClearCmd +"./parted /dev/block/mmcblk0 --script \n";
         if (iNbProcPart==6) {
             for (int i = 0; i < iNbProcPart; i++) {
                 szClearCmd = szClearCmd + String.format("rm %d\n", objProcPart[i].getId());
@@ -79,6 +84,9 @@ public class ProcessFileGPT
     public String GeneratedScriptMake() {
         String szClearCmd="";
 
+        szClearCmd = szClearCmd +"#!/sbin/sh \n";
+        szClearCmd = szClearCmd +" \n";
+        szClearCmd = szClearCmd +"./parted -a optimal /dev/block/mmcblk0 --script \n";
         szClearCmd = szClearCmd +"unit s\n";
         if (iNbProcPart==6) {
             for (int i = 0; i < iNbProcPart; i++) {
@@ -216,13 +224,13 @@ public class ProcessFileGPT
 
                 // End scan
                 if ((szLine == null) || (szLine.isEmpty())) {
-                    return numberOfItems;
+                    return iCurrentItem;
                 }
 
                 // Error scan
                 if (szLine.length()!=81) {
                     Log.println(Log.WARN, "ReadGPT"," Incorrect line len : " + szLine.length() + " != 81");
-                    return numberOfItems;
+                    return iCurrentItem;
                 }
 
                 objFullPart[iCurrentItem] = new Partition();
@@ -274,10 +282,10 @@ public class ProcessFileGPT
 
                 iCurrentItem++;
             }
-            return numberOfItems;
         }
 
-        return numberOfItems;
+        iNbFullPart=iCurrentItem;
+        return iCurrentItem;
     }
 
 }

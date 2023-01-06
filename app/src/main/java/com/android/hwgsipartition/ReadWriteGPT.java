@@ -14,23 +14,24 @@ public class ReadWriteGPT {
             // Executes the command.
             // ./parted /dev/block/mmcblk0 --script unit s print
 
-            String command = String.format("%s/libparted.so", basedir);
+            //String[] cmdarray = new String[] {command,"/dev/block/mmcblk0","--script unit s print"};
+            //String command = String.format("%s/libparted.so", basedir);
+            String command = "ls -al  /dev/block/platform/hi_mci.0/by-name/";
+
             Log.println(Log.INFO, "ReadGPT", "Exec : " + command);
 
-            String[] cmdarray = new String[] {command,"/dev/block/mmcblk0","--script unit s print"};
-            Process process = Runtime.getRuntime().exec( cmdarray );
-
+            Process process = Runtime.getRuntime().exec( command );
             Log.println(Log.INFO, "ReadGPT", "Début de lecture");
 
             // Reads stdout.
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             int read;
-            char[] buffer = new char[8192];
+            char[] buffer = new char[4096];
             StringBuffer output = new StringBuffer();
 
             while ((read = reader.read(buffer)) > 0) {
                 output.append(buffer, 0, read);
-                Log.println(Log.INFO, "ReadGPT", buffer.toString());
+
             }
             reader.close();
 
@@ -39,8 +40,8 @@ public class ReadWriteGPT {
             // Waits for the command to finish.
             process.waitFor();
 
+            Log.println(Log.INFO, "ReadGPT", output.toString());
 
-            //return output.toString();
             return output.toString();
         } catch (IOException e) {
             Log.e("ReadGPT",e.toString());
