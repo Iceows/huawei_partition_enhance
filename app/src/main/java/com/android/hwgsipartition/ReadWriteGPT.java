@@ -12,7 +12,8 @@ public class ReadWriteGPT {
     String ReadMyGPTPhone (String basedir) {
         try {
             // Executes the command.
-            // ./parted /dev/block/mmcblk0 --script unit s print
+            // ./parted /dev/block/mmcblk0 --script unit s print quit > HuaweiFileGPT.txt
+            // ls -al  /dev/block/platform/hi_mci.0/by-name/ > HuaweiFilePart.txt
 
             //String[] cmdarray = new String[] {command,"/dev/block/mmcblk0","--script unit s print"};
             //String command = String.format("%s/libparted.so", basedir);
@@ -63,6 +64,11 @@ public class ReadWriteGPT {
             e.printStackTrace();
         }
     }
+
+    String ReadMyPartitionFile (String szFile) {
+        return "";
+    }
+
 
     String ReadMyGPTFile (String szFile) {
         String result = null;

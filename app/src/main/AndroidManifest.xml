@@ -2,9 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.hwgsipartition">
 
-    <!-- ENABLE PERMISSIONS ABOUT EXTERNAL STORAGE ACCESS -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!--Permissions for the Android below 11 (R)-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!--Permission for the Android 11 (R) and above-->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+
+    <!--Android 10 only requires android:requestLegacyExternalStorage="true"-->
 
     <application
         android:extractNativeLibs="true"
@@ -13,7 +17,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.HWGsiPartition">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
