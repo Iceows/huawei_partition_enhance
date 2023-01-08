@@ -61,7 +61,7 @@ public class ProcessFileGPT
         szClearCmd = szClearCmd +"#!/sbin/sh \n";
         szClearCmd = szClearCmd +" \n";
         szClearCmd = szClearCmd +"./parted /dev/block/mmcblk0 --script \n";
-        if (iNbProcPart==6) {
+        if ((iNbProcPart==6) || (iNbProcPart==8)) {
             for (int i = 0; i < iNbProcPart; i++) {
                 szClearCmd = szClearCmd + String.format("rm %d\n", objProcPart[i].getId());
             }
@@ -88,7 +88,7 @@ public class ProcessFileGPT
         szClearCmd = szClearCmd +" \n";
         szClearCmd = szClearCmd +"./parted -a optimal /dev/block/mmcblk0 --script \n";
         szClearCmd = szClearCmd +"unit s\n";
-        if (iNbProcPart==6) {
+        if ((iNbProcPart==6) || (iNbProcPart==8)) {
             for (int i = 0; i < iNbProcPart; i++) {
                 szClearCmd = szClearCmd + String.format("mkpart %s %s %ds %ds\n", objProcPart[i].getName(),objProcPart[i].getTypeFs(),objProcPart[i].getStartSectorPos(),objProcPart[i].getEndSectorPos());
                 szClearCmd = szClearCmd + String.format("set %d %s on\n", objProcPart[i].getId(),objProcPart[i].getFlagFs());
@@ -119,6 +119,10 @@ public class ProcessFileGPT
         objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
         objProcPart[iCurrentItem].setNbSectorPos(iNewNbSector);
         objProcPart[iCurrentItem].LogInfo();
+
+        //01-08 13:07:20.625 10806 10806 I ReadGPT :   52      2064384s   9699327s    7634944s    ext2         system             msftdata
+        //01-08 13:07:20.625 10806 10806 I ReadGPT :   53      9699328s   12009471s   2310144s    ext4         preas              msftdata
+        //01-08 13:07:20.625 10806 10806 I ReadGPT :   54      12009472s  12075007s   65536s      ext4         preavs             msftdata
 
         // Process cust - decale de la taille calculé avant
         iCurrentItem++;
