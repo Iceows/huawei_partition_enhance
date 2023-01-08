@@ -43,11 +43,11 @@ public class ProcessFileGPT
             iNbModPart=KeepModPart();
             if (iNbModPart>0) {
                 Log.println(Log.INFO, "ReadGPT", "iNbModPart > 0 :" + String.valueOf(iNbModPart));
-                if (iNbModPart!=6)
+                if ((iNbModPart!=6) && (iNbModPart!=8))
                     return false;
                 iNbProcPart=KeepProcPart();
                 Log.println(Log.INFO, "ReadGPT", "iNbProcPart :" + String.valueOf(iNbProcPart));
-                if (iNbProcPart==6) {
+                if ((iNbProcPart==6) || (iNbProcPart==8)) {
                     return true;
                 }
             }
@@ -211,6 +211,9 @@ public class ProcessFileGPT
             if (szLine.equals("Number  Start      End        Size       File system  Name               Flags")) {
                 bStartTable = true;
             }
+            if (szLine.equals("Number  Start      End         Size        File system  Name               Flags")) {
+                bStartTable = true;
+            }
         }
 
         if (bStartTable!=true)
@@ -228,7 +231,7 @@ public class ProcessFileGPT
                 }
 
                 // Error scan
-                if (szLine.length()!=81) {
+                if ((szLine.length()!=81) && (szLine.length()!=83)) {
                     Log.println(Log.WARN, "ReadGPT"," Incorrect line len : " + szLine.length() + " != 81");
                     return iCurrentItem;
                 }
