@@ -75,6 +75,18 @@ public class ProcessFileGPT
     public String GeneratedScriptFormat() {
         String szClearCmd="";
 
+        szClearCmd = szClearCmd +"#!/sbin/sh \n";
+        szClearCmd = szClearCmd +" \n";
+        if ((iNbProcPart==6) || (iNbProcPart==8)) {
+            for (int i = 0; i < iNbProcPart; i++) {
+                if (objProcPart[i].getTypeFs().equals("ext2"))
+                    szClearCmd = szClearCmd + String.format("mk2fs.ext4 %s\n", objProcPart[i].getPname());
+                else
+                    szClearCmd = szClearCmd + String.format("mk2fs.%s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
+            }
+        }
+        Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
+
         return szClearCmd;
     }
 
@@ -316,7 +328,7 @@ public class ProcessFileGPT
                     szTmp=szLine.substring(54, 72).trim();
                 if (iLineLength==83)
                     szTmp=szLine.substring(56, 74).trim();
-                if ((szTmp != null) &&  (!szTmp.isEmpty())) {
+                if (!isEmpty(szTmp)) {
                     objFullPart[iCurrentItem].setName(szTmp);
                 }
 
@@ -325,13 +337,20 @@ public class ProcessFileGPT
                     szTmp=szLine.substring(73, 81).trim();
                 if (iLineLength==83)
                     szTmp=szLine.substring(75, 83).trim();
-                if ((szTmp != null) &&  (!szTmp.isEmpty())) {
+                if (!isEmpty(szTmp)) {
                     objFullPart[iCurrentItem].setFlagFs(szTmp);
                 }
 
                 // Mount point for format
                 String szName = objFullPart[iCurrentItem].getName();
                 for (String szLine2 : strFullPartitionMnt) {
+                    int i=szLine2.indexOf(szName +  " -> ");
+                        if (i>-1) {
+                            // Found
+							int istart=szLine2.indexOf(" -> ");
+							String szPointName = szLine2.substring(istart+4);
+                            objFullPart[iCurrentItem].setPname(szPointName);
+                        }
 
                 }
 
@@ -343,4 +362,7 @@ public class ProcessFileGPT
         return iCurrentItem;
     }
 
+	public static boolean isEmpty(String str) {
+        return str == null || str.length() == 0;
+    }
 }

@@ -222,6 +222,10 @@ public class MainActivity extends AppCompatActivity {
         szCmd = objProcess.GeneratedScriptMake();
         writeToStorage(2, szCmd);
 
+        // Genere le fichier pour creer les partitions
+        szCmd = objProcess.GeneratedScriptFormat();
+        writeToStorage(3, szCmd);
+
         Toast.makeText(this, "Les scripts ont été générés avec succés", Toast.LENGTH_SHORT).show();
 
         return true;
@@ -250,6 +254,8 @@ public class MainActivity extends AppCompatActivity {
             objReadWrite.WriteGPTScript(directory.toString(),"clearpart.sh", szCmd);
         if (i==2)
             objReadWrite.WriteGPTScript(directory.toString(),"makepart.sh", szCmd);
+        if (i==3)
+            objReadWrite.WriteGPTScript(directory.toString(),"formatpart.sh", szCmd);
 
         return false;
     }
