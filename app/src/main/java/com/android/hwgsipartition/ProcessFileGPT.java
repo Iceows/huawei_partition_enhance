@@ -35,8 +35,8 @@ public class ProcessFileGPT
 
 
     // en parametre le resultat du print parted
-    public boolean StartProcess(String sMyInitialGPT) {
-        iNbFullPart=KeepFullPart(sMyInitialGPT);
+    public boolean StartProcess(String sMyInitialGPT, String sMyPartition) {
+        iNbFullPart=KeepFullPart(sMyInitialGPT,sMyPartition);
 
         if (iNbFullPart>0) {
             Log.println(Log.INFO, "ReadGPT", "iNbFullPart > 0 : " + String.valueOf(iNbFullPart));
@@ -219,12 +219,14 @@ public class ProcessFileGPT
         return iCurrentItem;
     }
 
-    public int KeepFullPart(String sMyInitialGPT) {
+    public int KeepFullPart(String sMyInitialGPT, String szMyPartitionMount) {
         Boolean bStartTable = false;
         String[] strNewPartition = new String[100];
         int numberOfItems = 0;
         int iCurrentItem=0;
         String[] strFullPartition = sMyInitialGPT.split("\n");
+        String[] strFullPartitionMnt = szMyPartitionMount.split("\n");
+
 
         for (String szLine : strFullPartition) {
 
@@ -290,7 +292,6 @@ public class ProcessFileGPT
                 }
 
                 // Nb de sector
-                // if ligne= 83 (+1)
                 if (iLineLength==81)
                     szTmp=szLine.substring(29, 40).trim();
                 if (iLineLength==83)
@@ -301,8 +302,7 @@ public class ProcessFileGPT
                     objFullPart[iCurrentItem].setNbSector(Integer.parseInt(szTmp1));
                 }
 
-                // Type (+2)
-                //43
+                // Type
                 if (iLineLength==81)
                     szTmp=szLine.substring(41, 53).trim();
                 if (iLineLength==83)
@@ -327,6 +327,12 @@ public class ProcessFileGPT
                     szTmp=szLine.substring(75, 83).trim();
                 if ((szTmp != null) &&  (!szTmp.isEmpty())) {
                     objFullPart[iCurrentItem].setFlagFs(szTmp);
+                }
+
+                // Mount point for format
+                String szName = objFullPart[iCurrentItem].getName();
+                for (String szLine2 : strFullPartitionMnt) {
+
                 }
 
                 iCurrentItem++;

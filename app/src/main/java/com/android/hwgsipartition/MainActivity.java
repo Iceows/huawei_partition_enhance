@@ -39,7 +39,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 // Executes the command.
 // ./parted /dev/block/mmcblk0 --script unit s print quit >  ./Documents/HuaweiFileGPT.txt
-// ls -al  /dev/block/platform/hi_mci.0/by-name/ > ./Documents/HuaweiFilePart.txt
+//  ls -la /dev/block/platform/hi_mci.0/by-name/  | grep "\->" | cut -c46- > ./Documents/HuaweiFilePart.txt
 // chown media_rw:media_rw HuaweiFilePart.txt
 
 
@@ -132,8 +132,10 @@ public class MainActivity extends AppCompatActivity {
         Partition[] objPartMod;
         Partition[] objPartProc;
 
-        if (objProcess.StartProcess(sMyInitialGPT) == false)
+        if (objProcess.StartProcess(sMyInitialGPT,sMyPartitions) == false)
             return;
+
+
 
         // Remplit les tableaux
         objPartProc = objProcess.getProcPart();
@@ -230,8 +232,8 @@ public class MainActivity extends AppCompatActivity {
 
         directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
 
-        sMyPartitions=objReadWrite.ReadMyGPTFile(directory.toString() + "/" + HWFILEPARTITION);
-        sMyInitialGPT=objReadWrite.ReadMyGPTFile(directory.toString() + "/" + HWFILEGPT);
+        sMyPartitions=objReadWrite.ReadMyFile(directory.toString() + "/" + HWFILEPARTITION);
+        sMyInitialGPT=objReadWrite.ReadMyFile(directory.toString() + "/" + HWFILEGPT);
 
         if (!sMyPartitions.isEmpty() && !sMyInitialGPT.isEmpty() )
             return true;

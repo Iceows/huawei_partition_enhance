@@ -5,6 +5,7 @@ import android.util.Log;
 public class Partition {
 
     private int id;
+    private String pname;
     private String name;
     private String typefs;
     private String flagfs;
@@ -21,10 +22,11 @@ public class Partition {
         flagfs=new String("");
         name=new String("");
         typefs=new String("");
+        pname=new String("");
     }
 
     Partition(int newId, int newStartSector,int newEndSector,int newNbSector,String newFlagfs,
-              String newName, String newTypefs){
+              String newName, String newTypefs,String newPname){
         id=newId;
         startSector=newStartSector;
         endSector=newEndSector;
@@ -32,6 +34,7 @@ public class Partition {
         flagfs=newFlagfs;
         name=newName;
         typefs=newTypefs;
+        pname=newPname;
     }
 
     Partition(Partition objPart){
@@ -42,6 +45,7 @@ public class Partition {
         flagfs=objPart.getFlagFs();
         name=objPart.getName();
         typefs=objPart.getTypeFs();
+        pname=objPart.getPname();
     }
 
     public int getId() {
@@ -61,6 +65,9 @@ public class Partition {
     }
     public int getEndSectorPos() { return endSector; }
     public int getNbSector() { return nbSector; }
+    public String getPname() {
+        return pname;
+    }
 
 
     public void setId(int newId) {
@@ -84,6 +91,9 @@ public class Partition {
     public void setNbSector(int newnbSector) {
         this.nbSector = newnbSector;
     }
+    public void setPname(String newPointName) {
+        this.pname = newPointName.trim();
+    }
 
     public String StringInfo()
     {
@@ -93,7 +103,8 @@ public class Partition {
                 + String.valueOf(nbSector) + " - "
                 + typefs + " - "
                 + name + " - "
-                + flagfs;
+                + flagfs + " - "
+                + pname;
 
         return szFullLine;
 
@@ -107,7 +118,8 @@ public class Partition {
                 + String.valueOf(nbSector) + " - "
                 + typefs + " - "
                 + name + " - "
-                + flagfs;
+                + flagfs + " - "
+                + pname;
 
         Log.println(Log.INFO, "ReadGPT", szFullLine);
     }

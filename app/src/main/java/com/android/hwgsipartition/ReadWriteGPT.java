@@ -65,12 +65,8 @@ public class ReadWriteGPT {
         }
     }
 
-    String ReadMyPartitionFile (String szFile) {
-        return "";
-    }
 
-
-    String ReadMyGPTFile (String szFile) {
+    String ReadMyFile (String szFile) {
         String result = null;
         BufferedReader br;
 
