@@ -60,13 +60,14 @@ public class ProcessFileGPT
 
         szClearCmd = szClearCmd +"#!/sbin/sh \n";
         szClearCmd = szClearCmd +" \n";
-        szClearCmd = szClearCmd +"./parted /dev/block/mmcblk0 --script \n";
+        szClearCmd = szClearCmd +"./parted /dev/block/mmcblk0 --script \\\n";
         if ((iNbProcPart==6) || (iNbProcPart==8)) {
             for (int i = 0; i < iNbProcPart; i++) {
-                szClearCmd = szClearCmd + String.format("rm %d\n", objProcPart[i].getId());
+                szClearCmd = szClearCmd + String.format("rm %d \\\n", objProcPart[i].getId());
             }
             Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
         }
+        szClearCmd = szClearCmd +"p free \\\nquit\n";
         return szClearCmd;
     }
 
@@ -79,10 +80,10 @@ public class ProcessFileGPT
         szClearCmd = szClearCmd +" \n";
         if ((iNbProcPart==6) || (iNbProcPart==8)) {
             for (int i = 0; i < iNbProcPart; i++) {
-                if (objProcPart[i].getTypeFs().equals("ext2"))
-                    szClearCmd = szClearCmd + String.format("mk2fs.ext4 %s\n", objProcPart[i].getPname());
-                else
-                    szClearCmd = szClearCmd + String.format("mk2fs.%s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
+                if ((objProcPart[i].getTypeFs().equals("ext2")) || (objProcPart[i].getTypeFs().equals("ext4")))
+                    szClearCmd = szClearCmd + String.format("mke2fs -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
+                if (objProcPart[i].getTypeFs().equals("f2fs") )
+                    szClearCmd = szClearCmd + String.format("mkfs.f2fs %s\n", objProcPart[i].getPname());
             }
         }
         Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
@@ -98,17 +99,17 @@ public class ProcessFileGPT
 
         szClearCmd = szClearCmd +"#!/sbin/sh \n";
         szClearCmd = szClearCmd +" \n";
-        szClearCmd = szClearCmd +"./parted -a optimal /dev/block/mmcblk0 --script \n";
-        szClearCmd = szClearCmd +"unit s\n";
+        szClearCmd = szClearCmd +"./parted -a optimal /dev/block/mmcblk0 --script \\\n";
+        szClearCmd = szClearCmd +"unit s \\\n";
         if ((iNbProcPart==6) || (iNbProcPart==8)) {
             for (int i = 0; i < iNbProcPart; i++) {
-                szClearCmd = szClearCmd + String.format("mkpart %s %s %ds %ds\n", objProcPart[i].getName(),objProcPart[i].getTypeFs(),objProcPart[i].getStartSectorPos(),objProcPart[i].getEndSectorPos());
-                szClearCmd = szClearCmd + String.format("set %d %s on\n", objProcPart[i].getId(),objProcPart[i].getFlagFs());
-                szClearCmd = szClearCmd + String.format("name %d %s\n", objProcPart[i].getId(),objProcPart[i].getName());
+                szClearCmd = szClearCmd + String.format("mkpart %s %s %ds %ds \\\n", objProcPart[i].getName(),objProcPart[i].getTypeFs(),objProcPart[i].getStartSectorPos(),objProcPart[i].getEndSectorPos());
+                szClearCmd = szClearCmd + String.format("set %d %s on \\\n", objProcPart[i].getId(),objProcPart[i].getFlagFs());
+                szClearCmd = szClearCmd + String.format("name %d %s \\\n", objProcPart[i].getId(),objProcPart[i].getName());
             }
             Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
         }
-        szClearCmd = szClearCmd +"p free\nquit\n";
+        szClearCmd = szClearCmd +"p free \\\nquit\n";
         return szClearCmd;
     }
 
