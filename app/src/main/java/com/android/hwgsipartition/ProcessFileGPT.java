@@ -78,7 +78,7 @@ public class ProcessFileGPT
         return szClearCmd;
     }
 
-    //mkpart system-b ext4 7153MB 11153MB
+    //mkpart system ext2 7153MB 11153MB
     //set 59 msftdata on
     //name 59 system-b
     public String GeneratedScriptMake() {
@@ -102,7 +102,7 @@ public class ProcessFileGPT
 
     public int KeepProcPart() {
         int iCurrentItem=0;
-        int iNewSartSector=0;
+        int iNewStartSector=0;
         int iNewEndSector=0;
         int iNewNbSector=0;
         int iOldNbSector=0;
@@ -117,56 +117,79 @@ public class ProcessFileGPT
         iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
         iNewNbSector=7000000;
         objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
-        objProcPart[iCurrentItem].setNbSectorPos(iNewNbSector);
+        objProcPart[iCurrentItem].setNbSector(iNewNbSector);
         objProcPart[iCurrentItem].LogInfo();
 
-        //01-08 13:07:20.625 10806 10806 I ReadGPT :   52      2064384s   9699327s    7634944s    ext2         system             msftdata
-        //01-08 13:07:20.625 10806 10806 I ReadGPT :   53      9699328s   12009471s   2310144s    ext4         preas              msftdata
-        //01-08 13:07:20.625 10806 10806 I ReadGPT :   54      12009472s  12075007s   65536s      ext4         preavs             msftdata
+        // Preavs et preas partition
+        if (iNbModPart==8) {
+            //01-08 13:07:20.625 10806 10806 I ReadGPT :   52      2064384s   9699327s    7634944s    ext2         system             msftdata
+            //01-08 13:07:20.625 10806 10806 I ReadGPT :   53      9699328s   12009471s   2310144s    ext4         preas              msftdata
+            //01-08 13:07:20.625 10806 10806 I ReadGPT :   54      12009472s  12075007s   65536s      ext4         preavs             msftdata
+            // preas
+            iCurrentItem++;
+            objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
+            iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
+            iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
+            objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
+            objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
+            objProcPart[iCurrentItem].LogInfo();
 
-        // Process cust - decale de la taille calculé avant
+            // Preavs
+            iCurrentItem++;
+            objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
+            iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
+            iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
+            objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
+            objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
+            objProcPart[iCurrentItem].LogInfo();
+        }
+
+        // Cust
         iCurrentItem++;
         objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
-        iNewSartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
+        iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
         iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
-        objProcPart[iCurrentItem].setStartSectorPos(iNewSartSector);
+        objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
         objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
         objProcPart[iCurrentItem].LogInfo();
 
         // version
         iCurrentItem++;
         objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
-        iNewSartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
+        iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
         iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
-        objProcPart[iCurrentItem].setStartSectorPos(iNewSartSector);
+        objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
         objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
         objProcPart[iCurrentItem].LogInfo();
 
         // vendor
         iCurrentItem++;
         objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
-        iNewSartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
+        iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
         iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
-        objProcPart[iCurrentItem].setStartSectorPos(iNewSartSector);
+        objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
         objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
         objProcPart[iCurrentItem].LogInfo();
 
         // product
         iCurrentItem++;
         objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
-        iNewSartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
+        iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
         iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
-        objProcPart[iCurrentItem].setStartSectorPos(iNewSartSector);
+        objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
         objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
         objProcPart[iCurrentItem].LogInfo();
 
         // userdata
         iCurrentItem++;
+        if (!objModPart[iCurrentItem].getName().equals("userdata"))
+            return 0;
+
         objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
-        iNewSartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
-        iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
-        objProcPart[iCurrentItem].setStartSectorPos(iNewSartSector);
-        objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
+        iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
+        iNewNbSector=objProcPart[iCurrentItem].getEndSectorPos()-iNewStartSector+1;
+        objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
+        objProcPart[iCurrentItem].setNbSector(iNewNbSector);
         objProcPart[iCurrentItem].LogInfo();
 
         iCurrentItem++;
@@ -212,9 +235,11 @@ public class ProcessFileGPT
             }
 
             // On a trouvé l'entete du début de table des partitions
+            // EMUI 8
             if (szLine.equals("Number  Start      End        Size       File system  Name               Flags")) {
-                bStartTable = true;
+                    bStartTable = true;
             }
+            // EMUI 9.1
             if (szLine.equals("Number  Start      End         Size        File system  Name               Flags")) {
                 bStartTable = true;
             }
@@ -228,12 +253,14 @@ public class ProcessFileGPT
         if (numberOfItems>0) {
             for (String szLine : strNewPartition) {
                 String szTmp;
+                int iLineLength;
 
                 // End scan
                 if ((szLine == null) || (szLine.isEmpty())) {
                     return iCurrentItem;
                 }
 
+                iLineLength=szLine.length();
                 // Error scan
                 if ((szLine.length()!=81) && (szLine.length()!=83)) {
                     Log.println(Log.WARN, "ReadGPT"," Incorrect line len : " + szLine.length() + " != 81");
@@ -263,26 +290,41 @@ public class ProcessFileGPT
                 }
 
                 // Nb de sector
-                szTmp=szLine.substring(29, 40).trim();
+                // if ligne= 83 (+1)
+                if (iLineLength==81)
+                    szTmp=szLine.substring(29, 40).trim();
+                if (iLineLength==83)
+                    szTmp=szLine.substring(31, 42).trim();
+
                 if ((szTmp != null) &&  (!szTmp.isEmpty())) {
                     String szTmp1=szTmp.replace('s', ' ').trim();
-                    objFullPart[iCurrentItem].setNbSectorPos(Integer.parseInt(szTmp1));
+                    objFullPart[iCurrentItem].setNbSector(Integer.parseInt(szTmp1));
                 }
 
-                // Type
-                szTmp=szLine.substring(41, 53).trim();
+                // Type (+2)
+                //43
+                if (iLineLength==81)
+                    szTmp=szLine.substring(41, 53).trim();
+                if (iLineLength==83)
+                    szTmp=szLine.substring(43, 55).trim();
                 if ((szTmp != null) &&  (!szTmp.isEmpty())) {
                     objFullPart[iCurrentItem].setTypeFs(szTmp);
                 }
 
                 // Name
-                szTmp=szLine.substring(54, 72).trim();
+                if (iLineLength==81)
+                    szTmp=szLine.substring(54, 72).trim();
+                if (iLineLength==83)
+                    szTmp=szLine.substring(56, 74).trim();
                 if ((szTmp != null) &&  (!szTmp.isEmpty())) {
                     objFullPart[iCurrentItem].setName(szTmp);
                 }
 
                 // Flags
-                szTmp=szLine.substring(73, 81).trim();
+                if (iLineLength==81)
+                    szTmp=szLine.substring(73, 81).trim();
+                if (iLineLength==83)
+                    szTmp=szLine.substring(75, 83).trim();
                 if ((szTmp != null) &&  (!szTmp.isEmpty())) {
                     objFullPart[iCurrentItem].setFlagFs(szTmp);
                 }

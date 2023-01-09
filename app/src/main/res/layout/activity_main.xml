@@ -6,34 +6,41 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="1dp">
+        android:layout_height="80dp"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnReadPhoneGPT"
-            android:layout_width="match_parent"
-            android:layout_height="69dp"
+            android:layout_width="180dp"
+            android:layout_height="60dp"
             android:text="Read Phone GPT" />
 
         <Button
             android:id="@+id/btnCreateNewGPT"
-            android:layout_width="match_parent"
-            android:layout_height="69dp"
+            android:layout_width="180dp"
+            android:layout_height="60dp"
             android:text="Refactor GPT" />
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="300dp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:layout_editor_absoluteX="0dp">
+
+        <EditText
+            android:id="@+id/editTextTextPersonName"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="New system part size : 3 417 Mo" />
 
         <TableLayout
             android:id="@+id/tablePartMod"
@@ -53,6 +60,7 @@
                     android:text="ID - start - end - nb - typefs - name - flags"
                     android:textColor="@color/white" />
 
+
             </TableRow>
 
         </TableLayout>
@@ -61,7 +69,7 @@
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="240dp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout1"
         tools:layout_editor_absoluteX="0dp">
@@ -72,13 +80,7 @@
             android:layout_height="match_parent"
             tools:layout_editor_absoluteX="0dp">
 
-        <TextView
-            android:paddingLeft="5dp"
-            android:paddingTop="5dp"
-            android:paddingRight="5dp"
-            android:paddingBottom="5dp"
-            android:text="ID - start - end - nb - typefs - name - flags"
-            android:textColor="@color/white" />
+
 
         </TableLayout>
     </LinearLayout>

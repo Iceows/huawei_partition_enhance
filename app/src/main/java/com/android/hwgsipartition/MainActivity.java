@@ -25,29 +25,22 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.material.button.MaterialButton;
+
 
 import java.io.File;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
+// Executes the command.
+// ./parted /dev/block/mmcblk0 --script unit s print quit >  ./Documents/HuaweiFileGPT.txt
+// ls -al  /dev/block/platform/hi_mci.0/by-name/ > ./Documents/HuaweiFilePart.txt
+// chown media_rw:media_rw HuaweiFilePart.txt
 
 
 public class MainActivity extends AppCompatActivity {
@@ -221,11 +214,13 @@ public class MainActivity extends AppCompatActivity {
         // Genere le fichier pour supprimer les partitions
         String szCmd = "";
         szCmd = objProcess.GeneratedScriptRM();
-        //writeFromStorage(1, szCmd);
+        writeToStorage(1, szCmd);
 
         // Genere le fichier pour creer les partitions
         szCmd = objProcess.GeneratedScriptMake();
-        //writeFromStorage(2, szCmd);
+        writeToStorage(2, szCmd);
+
+        Toast.makeText(this, "Les scripts ont été générés avec succés", Toast.LENGTH_SHORT).show();
 
         return true;
     }
@@ -244,7 +239,18 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    private boolean writeToStorage(int i, String szCmd) {
+        File directory;
 
+        directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+
+        if (i==1)
+            objReadWrite.WriteGPTScript(directory.toString(),"clearpart.sh", szCmd);
+        if (i==2)
+            objReadWrite.WriteGPTScript(directory.toString(),"makepart.sh", szCmd);
+
+        return false;
+    }
 
     //https://devofandroid.blogspot.com/2022/05/manage-external-storage-permission_8.html
     private void createFolder(){
@@ -344,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
                 if (write && read) {
                     //External Storage permissions granted
                     Log.d(TAG, "onRequestPermissionsResult: External Storage permissions granted");
-                    createFolder();
+                    readPartFromStorage();
                 } else {
                     //External Storage permission denied
                     Log.d(TAG, "onRequestPermissionsResult: External Storage permission denied");

@@ -81,7 +81,7 @@ public class Partition {
     public void setEndSectorPos(int newEndSector) {
         this.endSector = newEndSector;
     }
-    public void setNbSectorPos(int newnbSector) {
+    public void setNbSector(int newnbSector) {
         this.nbSector = newnbSector;
     }
 
