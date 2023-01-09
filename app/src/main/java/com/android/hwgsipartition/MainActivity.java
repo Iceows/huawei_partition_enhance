@@ -279,22 +279,35 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // TODO isAOnly
     private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            //Android is 11(R) or above
-            try {
-                Log.d(TAG, "requestPermission: try");
+        boolean isAOnly = true;
 
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                Uri uri = Uri.fromParts("package", this.getPackageName(), null);
-                intent.setData(uri);
-                storageActivityResultLauncher.launch(intent);
-            } catch (Exception e) {
-                Log.e(TAG, "requestPermission: catch", e);
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                storageActivityResultLauncher.launch(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (isAOnly) {
+                //Android 11 with a-only system
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.MANAGE_EXTERNAL_STORAGE},
+                        STORAGE_PERMISSION_CODE
+                );
+            }
+            else {
+                //Android is 11(R) or above
+                try {
+                    Log.d(TAG, "requestPermission: try");
+
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+                    intent.setData(uri);
+                    storageActivityResultLauncher.launch(intent);
+                } catch (Exception e) {
+                    Log.e(TAG, "requestPermission: catch", e);
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    storageActivityResultLauncher.launch(intent);
+                }
             }
         } else {
             //Android is below 11(R)
@@ -354,6 +367,7 @@ public class MainActivity extends AppCompatActivity {
                 //check each permission if granted or not
                 boolean write = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 boolean read = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                boolean manage = grantResults[2] == PackageManager.PERMISSION_GRANTED;
 
                 if (write && read) {
                     //External Storage permissions granted

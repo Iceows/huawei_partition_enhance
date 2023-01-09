@@ -119,24 +119,22 @@ public class ProcessFileGPT
         int iNewNbSector=0;
         int iOldNbSector=0;
         int iIncreaseSize=0; // Nd de secteur a augmenter
+        int iNewSystemSize=7168000;// Pour optimiser la vitesse multiple de 2048
 
         // Process system - taille d'un secteur = 512 bytes
         // 6 160 384 sector = 3 008 Mo = 2,93 Go
-        // 7 000 000 sector = 3 417 Mo
+        // 7 000 000 sector = 3 500 Mo
         objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
         iOldNbSector=objProcPart[iCurrentItem].getNbSector();
-        iIncreaseSize=7000000-iOldNbSector;
+        iIncreaseSize=iNewSystemSize-iOldNbSector;
         iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
-        iNewNbSector=7000000;
+        iNewNbSector=iNewSystemSize;
         objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
         objProcPart[iCurrentItem].setNbSector(iNewNbSector);
         objProcPart[iCurrentItem].LogInfo();
 
         // Preavs et preas partition
         if (iNbModPart==8) {
-            //01-08 13:07:20.625 10806 10806 I ReadGPT :   52      2064384s   9699327s    7634944s    ext2         system             msftdata
-            //01-08 13:07:20.625 10806 10806 I ReadGPT :   53      9699328s   12009471s   2310144s    ext4         preas              msftdata
-            //01-08 13:07:20.625 10806 10806 I ReadGPT :   54      12009472s  12075007s   65536s      ext4         preavs             msftdata
             // preas
             iCurrentItem++;
             objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);

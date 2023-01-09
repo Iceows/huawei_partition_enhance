@@ -40,7 +40,7 @@
             android:layout_height="60dp"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="New system part size : 3 417 Mo" />
+            android:text="New system part size : 3 500 Mo" />
 
         <TableLayout
             android:id="@+id/tablePartMod"
