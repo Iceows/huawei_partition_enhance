@@ -43,11 +43,11 @@ public class ProcessFileGPT
             iNbModPart=KeepModPart();
             if (iNbModPart>0) {
                 Log.println(Log.INFO, "ReadGPT", "iNbModPart > 0 :" + String.valueOf(iNbModPart));
-                if ((iNbModPart!=6) && (iNbModPart!=8))
+                if (iNbModPart<3)
                     return false;
                 iNbProcPart=KeepProcPart();
                 Log.println(Log.INFO, "ReadGPT", "iNbProcPart :" + String.valueOf(iNbProcPart));
-                if ((iNbProcPart==6) || (iNbProcPart==8)) {
+                if (iNbProcPart==iNbModPart) {
                     return true;
                 }
             }
@@ -61,7 +61,7 @@ public class ProcessFileGPT
         szClearCmd = szClearCmd +"#!/sbin/sh \n";
         szClearCmd = szClearCmd +" \n";
         szClearCmd = szClearCmd +"./parted /dev/block/mmcblk0 --script \\\n";
-        if ((iNbProcPart==6) || (iNbProcPart==8)) {
+        if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
                 szClearCmd = szClearCmd + String.format("rm %d \\\n", objProcPart[i].getId());
             }
@@ -78,12 +78,14 @@ public class ProcessFileGPT
 
         szClearCmd = szClearCmd +"#!/sbin/sh \n";
         szClearCmd = szClearCmd +" \n";
-        if ((iNbProcPart==6) || (iNbProcPart==8)) {
+        if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
                 if ((objProcPart[i].getTypeFs().equals("ext2")) || (objProcPart[i].getTypeFs().equals("ext4")))
                     szClearCmd = szClearCmd + String.format("mke2fs -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
-                if (objProcPart[i].getTypeFs().equals("f2fs") )
+                if (objProcPart[i].getTypeFs().equals("f2fs"))
                     szClearCmd = szClearCmd + String.format("mkfs.f2fs %s\n", objProcPart[i].getPname());
+                if (objProcPart[i].getTypeFs().equals(""))
+                    szClearCmd = szClearCmd + String.format("mkfs.erofs %s\n", objProcPart[i].getPname());
             }
         }
         Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
@@ -101,7 +103,7 @@ public class ProcessFileGPT
         szClearCmd = szClearCmd +" \n";
         szClearCmd = szClearCmd +"./parted -a optimal /dev/block/mmcblk0 --script \\\n";
         szClearCmd = szClearCmd +"unit s \\\n";
-        if ((iNbProcPart==6) || (iNbProcPart==8)) {
+        if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
                 szClearCmd = szClearCmd + String.format("mkpart %s %s %ds %ds \\\n", objProcPart[i].getName(),objProcPart[i].getTypeFs(),objProcPart[i].getStartSectorPos(),objProcPart[i].getEndSectorPos());
                 szClearCmd = szClearCmd + String.format("set %d %s on \\\n", objProcPart[i].getId(),objProcPart[i].getFlagFs());
@@ -132,66 +134,26 @@ public class ProcessFileGPT
         iNewNbSector=iNewSystemSize;
         objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
         objProcPart[iCurrentItem].setNbSector(iNewNbSector);
+        objProcPart[iCurrentItem].setTypeFs("ext2");
         objProcPart[iCurrentItem].LogInfo();
 
-        // Preavs et preas partition
-        if (iNbModPart==8) {
-            // preas
-            iCurrentItem++;
-            objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
-            iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
-            iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
-            objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
-            objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
-            objProcPart[iCurrentItem].LogInfo();
 
-            // Preavs
+        for (int i=1;i<iNbModPart-1;i++) {
             iCurrentItem++;
             objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
             iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
             iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
             objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
             objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
+            String szTypeFS=objProcPart[iCurrentItem].getTypeFs();
+            // erofs or ext4
+            if (szTypeFS.equals(""))
+                objProcPart[iCurrentItem].setTypeFs("erofs");
             objProcPart[iCurrentItem].LogInfo();
         }
 
-        // Cust
-        iCurrentItem++;
-        objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
-        iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
-        iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
-        objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
-        objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
-        objProcPart[iCurrentItem].LogInfo();
 
-        // version
-        iCurrentItem++;
-        objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
-        iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
-        iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
-        objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
-        objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
-        objProcPart[iCurrentItem].LogInfo();
-
-        // vendor
-        iCurrentItem++;
-        objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
-        iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
-        iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
-        objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
-        objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
-        objProcPart[iCurrentItem].LogInfo();
-
-        // product
-        iCurrentItem++;
-        objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
-        iNewStartSector=objProcPart[iCurrentItem].getStartSectorPos()+iIncreaseSize;
-        iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
-        objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
-        objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
-        objProcPart[iCurrentItem].LogInfo();
-
-        // userdata
+        // userdata - just check if the last part is userdata
         iCurrentItem++;
         if (!objModPart[iCurrentItem].getName().equals("userdata"))
             return 0;
@@ -211,13 +173,20 @@ public class ProcessFileGPT
     public int KeepModPart() {
         boolean bStart=false;
         int iCurrentItem=0;
+        boolean bAB=false;
 
         for (int i = 0; i < iNbFullPart; i++) {
             String szPartName=objFullPart[i].getName();
 
+            bAB=false;
             if ((szPartName != null) &&  (!szPartName.isEmpty())) {
                 if (szPartName.equals("system")) {
                     bStart = true;
+                    bAB = false;
+                }
+                if (szPartName.equals("system_a")) {
+                    bStart = true;
+                    bAB = true;
                 }
             }
 
@@ -248,12 +217,16 @@ public class ProcessFileGPT
             }
 
             // On a trouvé l'entete du début de table des partitions
-            // EMUI 8
+            // PRA-LX1
             if (szLine.equals("Number  Start      End        Size       File system  Name               Flags")) {
                     bStartTable = true;
             }
-            // EMUI 9.1
+            // ANE-LX1
             if (szLine.equals("Number  Start      End         Size        File system  Name               Flags")) {
+                bStartTable = true;
+            }
+            // POT-LX1 (86)
+            if (szLine.equals("Number  Start      End         Size        File system  Name                 Flags")) {
                 bStartTable = true;
             }
         }
@@ -275,8 +248,10 @@ public class ProcessFileGPT
 
                 iLineLength=szLine.length();
                 // Error scan
-                if ((szLine.length()!=81) && (szLine.length()!=83)) {
-                    Log.println(Log.WARN, "ReadGPT"," Incorrect line len : " + szLine.length() + " != 81");
+                if ((szLine.length()!=81)
+                        && (szLine.length()!=83)
+                        && (szLine.length()!=85)) {
+                    Log.println(Log.WARN, "ReadGPT"," Incorrect line len : " + szLine.length() + " != 81 or 83 or 85");
                     return iCurrentItem;
                 }
 
@@ -284,20 +259,20 @@ public class ProcessFileGPT
 
                 // partition number
                 szTmp=szLine.substring(0, 7).trim();
-                if ((szTmp != null) &&  (!szTmp.isEmpty())) {
+                if (!isEmpty(szTmp)) {
                     objFullPart[iCurrentItem].setId(Integer.parseInt(szTmp));
                 }
 
                 // Start sector
                 szTmp=szLine.substring(8, 18).trim();
-                if ((szTmp != null) &&  (!szTmp.isEmpty())) {
+                if (!isEmpty(szTmp)) {
                     String szTmp1=szTmp.replace('s', ' ').trim();
                     objFullPart[iCurrentItem].setStartSectorPos(Integer.parseInt(szTmp1));
                 }
 
                 // End sector
                 szTmp=szLine.substring(19, 28).trim();
-                if ((szTmp != null) &&  (!szTmp.isEmpty())) {
+                if (!isEmpty(szTmp)) {
                     String szTmp1=szTmp.replace('s', ' ').trim();
                     objFullPart[iCurrentItem].setEndSectorPos(Integer.parseInt(szTmp1));
                 }
@@ -307,8 +282,10 @@ public class ProcessFileGPT
                     szTmp=szLine.substring(29, 40).trim();
                 if (iLineLength==83)
                     szTmp=szLine.substring(31, 42).trim();
+                if (iLineLength==85)
+                    szTmp=szLine.substring(31, 42).trim();
 
-                if ((szTmp != null) &&  (!szTmp.isEmpty())) {
+                if (!isEmpty(szTmp)) {
                     String szTmp1=szTmp.replace('s', ' ').trim();
                     objFullPart[iCurrentItem].setNbSector(Integer.parseInt(szTmp1));
                 }
@@ -318,7 +295,9 @@ public class ProcessFileGPT
                     szTmp=szLine.substring(41, 53).trim();
                 if (iLineLength==83)
                     szTmp=szLine.substring(43, 55).trim();
-                if ((szTmp != null) &&  (!szTmp.isEmpty())) {
+                if (iLineLength==85)
+                    szTmp=szLine.substring(43, 55).trim();
+                if (!isEmpty(szTmp)) {
                     objFullPart[iCurrentItem].setTypeFs(szTmp);
                 }
 
@@ -326,6 +305,8 @@ public class ProcessFileGPT
                 if (iLineLength==81)
                     szTmp=szLine.substring(54, 72).trim();
                 if (iLineLength==83)
+                    szTmp=szLine.substring(56, 74).trim();
+                if (iLineLength==85)
                     szTmp=szLine.substring(56, 74).trim();
                 if (!isEmpty(szTmp)) {
                     objFullPart[iCurrentItem].setName(szTmp);
@@ -336,21 +317,31 @@ public class ProcessFileGPT
                     szTmp=szLine.substring(73, 81).trim();
                 if (iLineLength==83)
                     szTmp=szLine.substring(75, 83).trim();
+                if (iLineLength==85)
+                    szTmp=szLine.substring(77, 85).trim();
                 if (!isEmpty(szTmp)) {
                     objFullPart[iCurrentItem].setFlagFs(szTmp);
                 }
 
                 // Mount point for format
                 String szName = objFullPart[iCurrentItem].getName();
+                boolean bAB=false;
+                int i=-1;
+
+                // Enleve _a
+                if (szName.indexOf("_a")!=-1)
+                    szName=szName.substring(0,szName.length()-2);
+
                 for (String szLine2 : strFullPartitionMnt) {
-                    int i=szLine2.indexOf(szName +  " -> ");
-                        if (i>-1) {
-                            // Found
-							int istart=szLine2.indexOf(" -> ");
-							String szPointName = szLine2.substring(istart+4);
+                    i=szLine2.indexOf(szName +  " -> ");
+                    if (i>-1) {
+                        // Found
+                        int istart=szLine2.indexOf(" -> ");
+                        if (istart>-1) {
+                            String szPointName = szLine2.substring(istart + 4);
                             objFullPart[iCurrentItem].setPname(szPointName);
                         }
-
+                    }
                 }
 
                 iCurrentItem++;

@@ -34,8 +34,14 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:layout_editor_absoluteX="0dp">
 
+        <CheckBox
+            android:id="@+id/chkAOnly"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Android 11 AOnly / Android 8" />
+
         <EditText
-            android:id="@+id/editTextTextPersonName"
+            android:id="@+id/edtNewSize"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:ems="10"

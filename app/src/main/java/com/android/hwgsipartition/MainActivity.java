@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -47,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
     // FILE PURPOSE
     private static final String HWFILEGPT = "HuaweiFileGPT.txt";
     private static final String HWFILEPARTITION = "HuaweiFilePart.txt";
-
-    private static final int RC_STORAGE_WRITE_PERMS = 100;
 
     //PERMISSION request constant, assign any value
     private static final int STORAGE_PERMISSION_CODE = 100;
@@ -114,12 +113,14 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("ReadGPT", sMyPartitions);
                     Log.d("ReadGPT", sMyInitialGPT);
 
+                    FillTable(view);
+
                 } else {
                     Log.d("ReadGPT", "onClick: Permissions was not granted, request...");
                     requestPermission();
                 }
 
-                FillTable(view);
+
                 //TextView textView = (TextView) findViewById(R.id.edtInitialGPT);
                 //textView.setText(sMyInitialGPT.toString()); //set text for text vie
             }
@@ -134,8 +135,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (objProcess.StartProcess(sMyInitialGPT,sMyPartitions) == false)
             return;
-
-
 
         // Remplit les tableaux
         objPartProc = objProcess.getProcPart();
@@ -281,7 +280,12 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO isAOnly
     private void requestPermission() {
-        boolean isAOnly = true;
+
+
+        CheckBox simpleCheckBox = (CheckBox) findViewById(R.id.chkAOnly);
+        Boolean checkBoxState = simpleCheckBox.isChecked();
+
+        boolean isAOnly = checkBoxState;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (isAOnly) {

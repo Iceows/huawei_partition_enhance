@@ -1,0 +1,12 @@
+Démarrez sous TWRP
+Executez le script 1-GetData.cmd
+
+Démarrez sous android
+Executez le programme HWGSIPartition
+
+Démarrez sous TWRP
+Executez le script 2-ProcessData.cmd
+
+Démarrez sous TWRP
+Retaillez la partition system
+Installez les patches LeaOS
