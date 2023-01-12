@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
             //Android is below 11(R)
             ActivityCompat.requestPermissions(
                     this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE},
                     STORAGE_PERMISSION_CODE
             );
         }
@@ -373,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
                 boolean read = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                 boolean manage = grantResults[2] == PackageManager.PERMISSION_GRANTED;
 
-                if (write && read) {
+                if (write && read && manage) {
                     //External Storage permissions granted
                     Log.d(TAG, "onRequestPermissionsResult: External Storage permissions granted");
                     readPartFromStorage();
