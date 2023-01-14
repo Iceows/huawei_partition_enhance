@@ -55,6 +55,21 @@ public class ProcessFileGPT
         return false;
     }
 
+    /*
+    ## SAFETY CHECK ###########################################################
+    # Check if ${BLOCK_DEVICE_PATH} is mounted, if yes, then exit
+        if [[ $(/bin/mount | grep -q "${BLOCK_DEVICE_PATH}") ]]; then
+            echo "BLOCK DEVICE ${BLOCK_DEVICE_PATH} ALREADY MOUNTED"
+            exit 1;
+        fi
+
+     ## SAFETY CHECK ###########################################################
+        if [[ $(/sbin/blkid ${BLOCK_DEVICE_PATH}) ]]; then
+            echo "BLOCK DEVICE ALREADY INITIALIZED, WILL NOT PROCEED WITH SCRIPT";
+            exit 1;
+        fi
+    */
+
     public String GeneratedScriptRM() {
         String szClearCmd="";
 
@@ -81,11 +96,11 @@ public class ProcessFileGPT
         if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
                 if ((objProcPart[i].getTypeFs().equals("ext2")) || (objProcPart[i].getTypeFs().equals("ext4")))
-                    szClearCmd = szClearCmd + String.format("mke2fs -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("./mke2fs -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
                 if (objProcPart[i].getTypeFs().equals("f2fs"))
-                    szClearCmd = szClearCmd + String.format("mkfs.f2fs %s\n", objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("./mkfs.f2fs %s\n", objProcPart[i].getPname());
                 if (objProcPart[i].getTypeFs().equals(""))
-                    szClearCmd = szClearCmd + String.format("mkfs.erofs %s\n", objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("./mkfs.erofs %s\n", objProcPart[i].getPname());
             }
         }
         Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
