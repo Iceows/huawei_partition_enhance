@@ -1,0 +1,78 @@
+Model: MMC hC8aP> (sd/mmc)
+Disk /dev/block/mmcblk0: 122142720s
+Sector size (logical/physical): 512B/512B
+Partition Table: gpt
+Disk Flags: 
+
+Number  Start      End         Size        File system  Name                 Flags
+ 1      1024s      2047s       1024s                    frp                  msftdata
+ 2      2048s      6143s       4096s                    persist              msftdata
+ 3      6144s      16383s      10240s                   reserved1            msftdata
+ 4      16384s     17407s      1024s                    reserved6            msftdata
+ 5      17408s     18431s      1024s                    vrl                  msftdata
+ 6      18432s     19455s      1024s                    vrl_backup           msftdata
+ 7      19456s     36863s      17408s      ext4         modem_secure         msftdata
+ 8      36864s     47103s      10240s                   nvme                 msftdata
+ 9      47104s     49151s      2048s                    certification        msftdata
+10      49152s     180223s     131072s                  oeminfo              msftdata
+11      180224s    245759s     65536s      ext4         secure_storage       msftdata
+12      245760s    311295s     65536s                   modem_om             msftdata
+13      311296s    344063s     32768s                   modemnvm_factory     msftdata
+14      344064s    376831s     32768s                   modemnvm_backup      msftdata
+15      376832s    446463s     69632s      ext4         modemnvm_img         msftdata
+16      446464s    450559s     4096s                    reserved7            msftdata
+17      450560s    458751s     8192s                    hisee_encos          msftdata
+18      458752s    460799s     2048s                    veritykey            msftdata
+19      460800s    462847s     2048s                    ddr_para             msftdata
+20      462848s    503807s     40960s                   modem_driver_a       msftdata
+21      503808s    518143s     14336s                   reserved2            msftdata
+22      518144s    681983s     163840s     ext4         splash2              msftdata
+23      681984s    686079s     4096s                    bootfail_info        msftdata
+24      686080s    690175s     4096s                    misc                 msftdata
+25      690176s    722943s     32768s                   dfx                  msftdata
+26      722944s    755711s     32768s                   rrecord              msftdata
+27      755712s    756223s     512s                     fw_lpm3_a            msftdata
+28      756224s    763903s     7680s                    reserved3_a          msftdata
+29      763904s    765951s     2048s                    hdcp_a               msftdata
+30      765952s    774143s     8192s                    hisee_img_a          msftdata
+31      774144s    782335s     8192s                    hhee_a               msftdata
+32      782336s    798719s     16384s      ext4         hisee_fs_a           msftdata
+33      798720s    823295s     24576s                   fastboot_a           msftdata
+34      823296s    831487s     8192s                    vector_a             msftdata
+35      831488s    835583s     4096s                    isp_boot_a           msftdata
+36      835584s    864255s     28672s                   isp_firmware_a       msftdata
+37      864256s    888831s     24576s                   fw_hifi_a            msftdata
+38      888832s    905215s     16384s                   teeos_a              msftdata
+39      905216s    937983s     32768s                   sensorhub_a          msftdata
+40      937984s    987135s     49152s                   erecovery_kernel_a   msftdata
+41      987136s    1052671s    65536s                   erecovery_ramdisk_a  msftdata
+42      1052672s   1085439s    32768s                   erecovery_vendor_a   msftdata
+43      1085440s   1134591s    49152s                   kernel_a             msftdata
+44      1134592s   1159167s    24576s                   eng_system_a         msftdata
+45      1159168s   1224703s    65536s                   recovery_ramdisk_a   msftdata
+46      1224704s   1257471s    32768s                   recovery_vendor_a    msftdata
+47      1257472s   1273855s    16384s                   dts_a                msftdata
+48      1273856s   1323007s    49152s                   dto_a                msftdata
+49      1323008s   1327103s    4096s                    trustfirmware_a      msftdata
+50      1327104s   1441791s    114688s     ext4         modem_fw_a           msftdata
+51      1441792s   1466367s    24576s                   eng_vendor_a         msftdata
+52      1466368s   1474559s    8192s                    modem_patch_nv_a     msftdata
+53      1474560s   1490943s    16384s                   reserved4_a          msftdata
+54      1490944s   1495039s    4096s                    recovery_vbmeta_a    msftdata
+55      1495040s   1499135s    4096s                    erecovery_vbmeta_a   msftdata
+56      1499136s   1507327s    8192s                    vbmeta_a             msftdata
+57      1507328s   1540095s    32768s                   modemnvm_update_a    msftdata
+58      1540096s   1572863s    32768s                   modemnvm_cust_a      msftdata
+59      1572864s   1638399s    65536s      ext4         patch_a              msftdata
+60      1638400s   1851391s    212992s     ext4         cache                msftdata
+61      1851392s   3768319s    1916928s                 preas                msftdata
+62      3768320s   3833855s    65536s                   preavs               msftdata
+63      3833856s   4816895s    983040s                  vendor_a             msftdata
+64      4816896s   5013503s    196608s                  odm_a                msftdata
+65      5013504s   5193727s    180224s                  cust_a               msftdata
+66      5193728s   12361727s   7168000s    ext2         system_a             msftdata
+67      12361728s  14409727s   2048000s    ext4         product_a            msftdata
+68      14409728s  15589375s   1179648s    ext4         version_a            msftdata
+69      15589376s  17489919s   1900544s    ext4         preload_a            msftdata
+70      17489920s  122142719s  104652800s  f2fs         userdata             msftdata
+

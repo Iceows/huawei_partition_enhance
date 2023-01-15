@@ -1,12 +1,31 @@
-Démarrez sous TWRP
-Executez le script 1-GetData.cmd
+############################################################
+#
+#
+############################################################
 
-Démarrez sous android
-Executez le programme HWGSIPartition
+0) Copier l'image de LeaOS que vous voulez installer a la racine de votre kit (LeaOS-20221213-iceows-ane.img)
+1) Extraire du fichier update_sd.zip, le fichier update.app dans le sous-repertoire img
+2) Extraire du fichier update.app toutes les img avec l'utilitaire HuaweiUpdateExtractor
+3) Démarrer sous TWRP
+4) Executer le script suivant sous cmd en mode administrateur
+	1-GetData.cmd
+5) Démarrer le telephone sous Android (adb reboot)
+6) Installer le programme HWGSIPartition et les fichiers de parametrage qui correspondent a votre appareil dans le repertoire Documents. Vous pouvez le faire via un adb shell
+   Il faut par contre activer le partage de fichier via USB avant et le debuggage via adb
+	adb install HWGSIPartition.apk
+	adb shell "mkdir /sdcard/Documents"
+	adb push ./phone/HuaweiFileGPT.txt /sdcard/Documents
+	adb push ./phone/HuaweiFilePart.txt /sdcard/Documents
+7) Executer le programme HWGSIPartition, vous devez donner les autorisations d'accés a tous les fichiers (privacy/permission manager/Files and media)
+	Cliquer sur Read Phone GPT
+	Cliquer sur Refactor GPT
+	Vous dever avoir apparaitre a l'ecran les infos de partitions 
+	Fermer HWGSIPartition
+8) Recuperer les fichiers générés par le programme HWGSIPartition et vérifier que vous avez bien un repertoire "Documents" désormais avec 5 fichiers.
+	adb pull "/sdcard/Documents/"
+9) Démarrer sous TWRP
+10) Executer le script 2-ProcessData.cmd
+11) Redemarrer sous Recovery (Recovery Huawei)
+12) Wipe data and after wipe cache
+13) Redemarrer normallement
 
-Démarrez sous TWRP
-Executez le script 2-ProcessData.cmd
-
-Démarrez sous TWRP
-Retaillez la partition system
-Installez les patches LeaOS

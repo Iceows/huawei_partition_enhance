@@ -163,7 +163,7 @@ public class ProcessFileGPT
             String szTypeFS=objProcPart[iCurrentItem].getTypeFs();
             // erofs or ext4
             if (szTypeFS.equals(""))
-                objProcPart[iCurrentItem].setTypeFs("erofs");
+                objProcPart[iCurrentItem].setTypeFs("ext4");
             objProcPart[iCurrentItem].LogInfo();
         }
 
