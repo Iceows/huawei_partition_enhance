@@ -39,8 +39,8 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 // Executes the command.
-// ./parted /dev/block/mmcblk0 --script unit s print quit >  ./Documents/HuaweiFileGPT.txt
-//  ls -la /dev/block/platform/hi_mci.0/by-name/  | grep "\->" | cut -c46- > ./Documents/HuaweiFilePart.txt
+// ./parted /dev/block/mmcblk0 --script unit s print quit >  ./Documents/HW/HuaweiFileGPT.txt
+//  ls -la /dev/block/platform/hi_mci.0/by-name/  | grep "\->" | cut -c46- > ./Documents/HW/HuaweiFilePart.txt
 // chown media_rw:media_rw HuaweiFilePart.txt
 
 
@@ -225,6 +225,10 @@ public class MainActivity extends AppCompatActivity {
         szCmd = objProcess.GeneratedScriptFormat();
         writeToStorage(3, szCmd);
 
+        // Genere le fichier pour creer les partitions
+        szCmd = objProcess.GeneratedScriptBackup();
+        writeToStorage(4, szCmd);
+
         Toast.makeText(this, "Les scripts ont été générés avec succés", Toast.LENGTH_SHORT).show();
 
         return true;
@@ -233,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean readPartFromStorage() {
         File directory;
 
-        directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS+"/HW");
 
         sMyPartitions=objReadWrite.ReadMyFile(directory.toString() + "/" + HWFILEPARTITION);
         sMyInitialGPT=objReadWrite.ReadMyFile(directory.toString() + "/" + HWFILEGPT);
@@ -247,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean writeToStorage(int i, String szCmd) {
         File directory;
 
-        directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS+"/HW");
 
         if (i==1)
             objReadWrite.WriteGPTScript(directory.toString(),"clearpart.sh", szCmd);
@@ -255,7 +259,8 @@ public class MainActivity extends AppCompatActivity {
             objReadWrite.WriteGPTScript(directory.toString(),"makepart.sh", szCmd);
         if (i==3)
             objReadWrite.WriteGPTScript(directory.toString(),"formatpart.sh", szCmd);
-
+        if (i==4)
+            objReadWrite.WriteGPTScript(directory.toString(),"backup.sh", szCmd);
         return false;
     }
 

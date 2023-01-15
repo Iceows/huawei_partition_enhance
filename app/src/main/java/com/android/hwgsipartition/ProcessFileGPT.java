@@ -96,15 +96,43 @@ public class ProcessFileGPT
         if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
                 if ((objProcPart[i].getTypeFs().equals("ext2")) || (objProcPart[i].getTypeFs().equals("ext4")))
-                    szClearCmd = szClearCmd + String.format("./mke2fs -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("/sbin/mke2fs -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
                 if (objProcPart[i].getTypeFs().equals("f2fs"))
-                    szClearCmd = szClearCmd + String.format("./mkfs.f2fs %s\n", objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("/sbin/mkfs.f2fs %s\n", objProcPart[i].getPname());
                 if (objProcPart[i].getTypeFs().equals(""))
-                    szClearCmd = szClearCmd + String.format("./mkfs.erofs %s\n", objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("/sbin/mkfs.erofs %s\n", objProcPart[i].getPname());
             }
         }
         Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
 
+        return szClearCmd;
+    }
+
+    //dd if=/dev/block/mmcblk0p51 of=/sdcard/preas.img
+    //dd if=/dev/block/mmcblk0p52 of=/sdcard/preavs.img
+    public String GeneratedScriptBackup() {
+        String szClearCmd = "";
+
+        szClearCmd = szClearCmd +"#!/sbin/sh\n";
+        szClearCmd = szClearCmd +"\n";
+        szClearCmd = szClearCmd +"# to list all partitions\n";
+        szClearCmd = szClearCmd +"# adb root\n";
+        szClearCmd = szClearCmd +"# adb shell\n";
+        szClearCmd = szClearCmd +"# ls -la /dev/block/platform/hi_mci.0/by-name/ \n";
+        szClearCmd = szClearCmd +"\n";
+        szClearCmd = szClearCmd +"rm -rf /data/*\n";
+        szClearCmd = szClearCmd +"\n";
+
+
+        if (iNbProcPart>1) {
+            for (int i = 0; i < iNbProcPart; i++) {
+                // don't backup system or userdata
+                if (!objProcPart[i].getName().equals("userdata") &&
+                        !objProcPart[i].getName().equals("system") &&
+                        !objProcPart[i].getName().equals("system_a") )
+                    szClearCmd = szClearCmd + String.format("dd if=%s of=/data/%s.img \n", objProcPart[i].getPname(),objProcPart[i].getName());
+            }
+        }
         return szClearCmd;
     }
 
@@ -114,8 +142,8 @@ public class ProcessFileGPT
     public String GeneratedScriptMake() {
         String szClearCmd="";
 
-        szClearCmd = szClearCmd +"#!/sbin/sh \n";
-        szClearCmd = szClearCmd +" \n";
+        szClearCmd = szClearCmd +"#!/sbin/sh\n";
+        szClearCmd = szClearCmd +"\n";
         szClearCmd = szClearCmd +"./parted -a optimal /dev/block/mmcblk0 --script \\\n";
         szClearCmd = szClearCmd +"unit s \\\n";
         if (iNbProcPart>1) {
