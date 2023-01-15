@@ -20,8 +20,13 @@
 7) Démarrer sous TWRP
 8) Executer le script 
 	4-ProcessData.cmd
-11) Redemarrer sous TWRP
-12) Formater la partition data
-13) Redemarrer sous TWRP
-12) Retailler la partition system
-13) Installer les patches LeaOS
+9) Redemarrer sous recovery (huawei)
+10) Reset to factory
+11) Redemarrer sous fastboot
+
+------------------
+
+Vous pouvez desormais installer votre twrp et votre image system
+
+
+
