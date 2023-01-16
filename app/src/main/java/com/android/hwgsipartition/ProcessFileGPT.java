@@ -86,6 +86,25 @@ public class ProcessFileGPT
         return szClearCmd;
     }
 
+
+    public String GeneratedScriptRestore() {
+        String szClearCmd="";
+
+        szClearCmd = szClearCmd +"echo \"HWGSIPartition - Part 5/5\n";
+        szClearCmd = szClearCmd +" \n";
+        if (iNbProcPart>1) {
+            for (int i = 0; i < iNbProcPart; i++) {
+                if (!objProcPart[i].getName().equals("userdata") &&
+                        !objProcPart[i].getName().equals("system") &&
+                        !objProcPart[i].getName().equals("system_a") )
+                    szClearCmd = szClearCmd + String.format("fastboot flash %s .\\data\\%s.img  \n", objProcPart[i].getName(),objProcPart[i].getName());
+            }
+        }
+        Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
+
+        return szClearCmd;
+    }
+
     //mkfs.ext4 /dev/block/mmcblk0p59
     //mkfs.f2fs /dev/block/mmcblk0p60
     public String GeneratedScriptFormat() {
@@ -99,8 +118,8 @@ public class ProcessFileGPT
                     szClearCmd = szClearCmd + String.format("/sbin/mke2fs -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
                 if (objProcPart[i].getTypeFs().equals("f2fs"))
                     szClearCmd = szClearCmd + String.format("/sbin/mkfs.f2fs %s\n", objProcPart[i].getPname());
-                if (objProcPart[i].getTypeFs().equals(""))
-                    szClearCmd = szClearCmd + String.format("/sbin/mkfs.erofs %s\n", objProcPart[i].getPname());
+                //if (objProcPart[i].getTypeFs().equals(""))
+                //    szClearCmd = szClearCmd + String.format("/sbin/mkfs.erofs %s\n", objProcPart[i].getPname());
             }
         }
         Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
@@ -169,7 +188,7 @@ public class ProcessFileGPT
 
         // Process system - taille d'un secteur = 512 bytes
         // 6 160 384 sector = 3 008 Mo = 2,93 Go
-        // 7 000 000 sector = 3 500 Mo
+        // 7 168 000 sector = 3 500 Mo
         objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
         iOldNbSector=objProcPart[iCurrentItem].getNbSector();
         iIncreaseSize=iNewSystemSize-iOldNbSector;

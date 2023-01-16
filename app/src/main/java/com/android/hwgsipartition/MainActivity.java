@@ -113,28 +113,28 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("ReadGPT", sMyPartitions);
                     Log.d("ReadGPT", sMyInitialGPT);
 
-                    FillTable(view);
+                    Button btCreate = (Button) findViewById(R.id.btnCreateNewGPT);
+
+                    btCreate.setEnabled(FillTable(view));
+
 
                 } else {
                     Log.d("ReadGPT", "onClick: Permissions was not granted, request...");
                     requestPermission();
                 }
 
-
-                //TextView textView = (TextView) findViewById(R.id.edtInitialGPT);
-                //textView.setText(sMyInitialGPT.toString()); //set text for text vie
             }
         });
 
     }
 
-    void FillTable(View view) {
+    boolean FillTable(View view) {
         int iNbPart = 0;
         Partition[] objPartMod;
         Partition[] objPartProc;
 
         if (objProcess.StartProcess(sMyInitialGPT,sMyPartitions) == false)
-            return;
+            return false;
 
         // Remplit les tableaux
         objPartProc = objProcess.getProcPart();
@@ -208,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
                     TableLayout.LayoutParams.WRAP_CONTENT));
 
         } // end of for loop
+
+        return true;
     }
 
     private boolean generateScript()
@@ -228,6 +230,10 @@ public class MainActivity extends AppCompatActivity {
         // Genere le fichier pour creer les partitions
         szCmd = objProcess.GeneratedScriptBackup();
         writeToStorage(4, szCmd);
+
+        // Genere le fichier pour creer les partitions
+        szCmd = objProcess.GeneratedScriptRestore();
+        writeToStorage(5, szCmd);
 
         Toast.makeText(this, "Les scripts ont été générés avec succés", Toast.LENGTH_SHORT).show();
 
@@ -261,6 +267,8 @@ public class MainActivity extends AppCompatActivity {
             objReadWrite.WriteGPTScript(directory.toString(),"formatpart.sh", szCmd);
         if (i==4)
             objReadWrite.WriteGPTScript(directory.toString(),"backup.sh", szCmd);
+        if (i==5)
+            objReadWrite.WriteGPTScript(directory.toString(),"99-FlashIMG.cmd", szCmd);
         return false;
     }
 

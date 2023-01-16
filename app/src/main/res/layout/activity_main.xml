@@ -22,14 +22,16 @@
             android:id="@+id/btnCreateNewGPT"
             android:layout_width="180dp"
             android:layout_height="60dp"
-            android:text="Refactor GPT" />
+            android:text="Refactor GPT"
+            android:enabled="false"
+            />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="320dp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:layout_editor_absoluteX="0dp">
