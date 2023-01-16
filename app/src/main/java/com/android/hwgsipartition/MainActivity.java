@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         if (i==4)
             objReadWrite.WriteGPTScript(directory.toString(),"backup.sh", szCmd);
         if (i==5)
-            objReadWrite.WriteGPTScript(directory.toString(),"99-FlashIMG.cmd", szCmd);
+            objReadWrite.WriteGPTScript(directory.toString(),"5-FlashIMG.cmd", szCmd);
         return false;
     }
 
