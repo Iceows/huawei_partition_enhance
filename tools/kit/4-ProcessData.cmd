@@ -1,4 +1,4 @@
-echo "HWGSIPartition - Part 2/4"
+echo "HWGSIPartition - Part 2/5"
 
 REM enable root
 adb root
@@ -30,23 +30,8 @@ adb shell "cd /tmp;./clearpart.sh"
 adb shell "cd /tmp;./makepart.sh"
 adb shell "cd /tmp;./formatpart.sh"
 
-pause "Reboot to bootloader ?"
+REM Copy flash cmd
+cp .\HW\5-FlashIMG.cmd .
+
+pause "Reboot to bootloader to flash vendor partition ?"
 adb reboot bootloader
-
-ping -n 5 127.0.0.1 > null
-
-REM Flash backup partition
-fastboot flash preas .\data\PREAS.img
-fastboot flash preavs .\data\PREAVS.img
-fastboot flash cust .\data\CUST.img
-fastboot flash version .\data\VERSION.img
-fastboot flash vendor .\data\VENDOR.img
-fastboot flash product .\data\PRODUCT.img
-fastboot flash recovery_ramdisk .\twrp\RECOVERY_RAMDIS.img
-
-ping -n 5 127.0.0.1 > null
-
-fastboot flash system LeaOS-20221213-iceows-ane.img
-
-ping -n 5 127.0.0.1 > null
-

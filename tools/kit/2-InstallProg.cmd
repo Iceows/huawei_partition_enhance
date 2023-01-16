@@ -1,4 +1,4 @@
-echo "HWGSIPartition - Part 2/4"
+echo "HWGSIPartition - Part 2/5"
 
 adb root
 

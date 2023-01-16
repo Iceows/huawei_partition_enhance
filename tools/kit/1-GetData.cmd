@@ -1,4 +1,4 @@
-echo "HWGSIPartition - Part 1/4"
+echo "HWGSIPartition - Part 1/5"
 
 adb root
 adb push ./arm64/parted /tmp

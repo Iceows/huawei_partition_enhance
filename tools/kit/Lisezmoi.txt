@@ -3,6 +3,7 @@
 #
 ############################################################
 
+0) Vous devez mettre dans le repertoire twrp, l'image du recovery d'origine huawei (RECOVERY_RAMDISK) et votre recovery twrp
 1) Démarrer sous TWRP
 2) Executer le script suivant sous cmd en mode administrateur
 	1-GetData.cmd
@@ -15,14 +16,16 @@
 	Cliquer sur Refactor GPT
 	Vous dever avoir apparaitre a l'ecran les infos de partitions 
 	Fermer HWGSIPartition
-6) Recuperer les fichiers générés par le programme HWGSIPartition et vérifier que vous avez bien un repertoire "Documents" désormais avec 5 fichiers.
+6) Recuperer les fichiers générés par le programme HWGSIPartition et vérifier que vous avez bien un repertoire HW désormais avec 7 fichiers.
 	3-GetIMG.cmd
 7) Démarrer sous TWRP
 8) Executer le script 
 	4-ProcessData.cmd
-9) Redemarrer sous recovery (huawei)
-10) Reset to factory
-11) Redemarrer sous fastboot
+9) Executer le script 
+	5-FlashIMG.cmd
+10) Redemarrer sous recovery (huawei)
+11) Reset to factory
+12) Redemarrer sous fastboot
 
 ------------------
 
