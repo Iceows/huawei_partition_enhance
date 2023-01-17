@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
         btnReadPhone = (Button) findViewById(R.id.btnReadPhoneGPT);//get id of button 2
 
 
-
         btnCreateNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,6 +120,10 @@ public class MainActivity extends AppCompatActivity {
                 if (checkPermission()) {
                     Log.d("ReadGPT", "onClick: Permissions already granted...");
                     //createFolder();
+
+
+
+                    // Read current partition and make new partition
                     readPartFromStorage();
                     Log.d("ReadGPT", sMyPartitions);
                     Log.d("ReadGPT", sMyInitialGPT);
@@ -145,8 +148,13 @@ public class MainActivity extends AppCompatActivity {
         Partition[] objPartMod;
         Partition[] objPartProc;
 
-        if (objProcess.StartProcess(sMyInitialGPT,sMyPartitions) == false)
+
+        Integer indexValue = spnSystemSize.getSelectedItemPosition();
+
+        if (objProcess.StartProcess(sMyInitialGPT,sMyPartitions,indexValue) == false)
             return false;
+
+
 
         // Remplit les tableaux
         objPartProc = objProcess.getProcPart();
@@ -154,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
         TextView[] textArrayProc = new TextView[iNbPart];
         TableRow[] tr_headProc = new TableRow[iNbPart];
         TableLayout tlp = (TableLayout) findViewById(R.id.tableParProc);
+        tlp.removeAllViews();
 
         for (int i = 0; i < iNbPart; i++) {
 
@@ -192,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
         TextView[] textArray = new TextView[iNbPart];
         TableRow[] tr_head = new TableRow[iNbPart];
         TableLayout tl = (TableLayout) findViewById(R.id.tablePartMod);
+        tl.removeAllViews();
 
         for (int i = 0; i < iNbPart; i++) {
             String szPartition;

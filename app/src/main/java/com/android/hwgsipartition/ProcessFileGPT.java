@@ -35,17 +35,35 @@ public class ProcessFileGPT
 
 
     // en parametre le resultat du print parted
-    public boolean StartProcess(String sMyInitialGPT, String sMyPartition) {
+    public boolean StartProcess(String sMyInitialGPT, String sMyPartition, Integer iSize) {
+        int iNewSystemSize=7168000; // Pour optimiser la vitesse multiple de 2048
+
         iNbFullPart=KeepFullPart(sMyInitialGPT,sMyPartition);
 
         if (iNbFullPart>0) {
             Log.println(Log.INFO, "ReadGPT", "iNbFullPart > 0 : " + String.valueOf(iNbFullPart));
+
+            // System size - size of sector = 512 bytes
+            if (iSize==0)
+                iNewSystemSize=4096000; // 2 Go
+            if (iSize==1)
+                iNewSystemSize=5248000; // 2.5 Go
+            if (iSize==2)
+                iNewSystemSize=6291456; // 3 Go
+            if (iSize==3)
+                iNewSystemSize=7168000; // 3.5 Go
+            if (iSize==4)
+                iNewSystemSize=8388608; // 4 Go
+
+            // 6 160 384 sector = 3 008 Mo = 2,93 Go
+            // 7 168 000 sector = 3 500 Mo
+
             iNbModPart=KeepModPart();
             if (iNbModPart>0) {
                 Log.println(Log.INFO, "ReadGPT", "iNbModPart > 0 :" + String.valueOf(iNbModPart));
                 if (iNbModPart<3)
                     return false;
-                iNbProcPart=KeepProcPart();
+                iNbProcPart=KeepProcPart(iNewSystemSize);
                 Log.println(Log.INFO, "ReadGPT", "iNbProcPart :" + String.valueOf(iNbProcPart));
                 if (iNbProcPart==iNbModPart) {
                     return true;
@@ -115,13 +133,16 @@ public class ProcessFileGPT
         if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
                 if ((objProcPart[i].getTypeFs().equals("ext2")) || (objProcPart[i].getTypeFs().equals("ext4")))
-                    szClearCmd = szClearCmd + String.format("/sbin/mke2fs -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
-                if (objProcPart[i].getTypeFs().equals("f2fs"))
-                    szClearCmd = szClearCmd + String.format("/sbin/mkfs.f2fs %s\n", objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("/tmp/mke2fs.iceows -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
+                if (objProcPart[i].getTypeFs().equals("f2fs")) {
+                    szClearCmd = szClearCmd + String.format("/tmp/mkfs.iceows.f2fs -l data %s\n", objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("/tmp/fsck.iceows.f2fs %s\n", objProcPart[i].getPname());
+                }
                 //if (objProcPart[i].getTypeFs().equals(""))
                 //    szClearCmd = szClearCmd + String.format("/sbin/mkfs.erofs %s\n", objProcPart[i].getPname());
             }
         }
+
         Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
 
         return szClearCmd;
@@ -177,18 +198,14 @@ public class ProcessFileGPT
         return szClearCmd;
     }
 
-    public int KeepProcPart() {
+    public int KeepProcPart(int iNewSystemSize ) {
         int iCurrentItem=0;
         int iNewStartSector=0;
         int iNewEndSector=0;
         int iNewNbSector=0;
         int iOldNbSector=0;
         int iIncreaseSize=0; // Nd de secteur a augmenter
-        int iNewSystemSize=7168000;// Pour optimiser la vitesse multiple de 2048
 
-        // Process system - taille d'un secteur = 512 bytes
-        // 6 160 384 sector = 3 008 Mo = 2,93 Go
-        // 7 168 000 sector = 3 500 Mo
         objProcPart[iCurrentItem] = new Partition(objModPart[iCurrentItem]);
         iOldNbSector=objProcPart[iCurrentItem].getNbSector();
         iIncreaseSize=iNewSystemSize-iOldNbSector;
