@@ -11,8 +11,10 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "ReadGPT";
 
     Button btnCreateNew, btnReadPhone;
+    Spinner spnSystemSize;
     ProcessFileGPT objProcess = new ProcessFileGPT();
     ReadWriteGPT objReadWrite = new ReadWriteGPT();
 
@@ -86,8 +89,17 @@ public class MainActivity extends AppCompatActivity {
         //    Log.println(Log.INFO, "ReadGPT", "libparted.so not exists");
 
 
+        spnSystemSize = (Spinner) findViewById(R.id.systemsize_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.systemsize_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnSystemSize.setAdapter(adapter);
+
+
         btnCreateNew = (Button) findViewById(R.id.btnCreateNewGPT);//get id of button 1
         btnReadPhone = (Button) findViewById(R.id.btnReadPhoneGPT);//get id of button 2
+
+
 
         btnCreateNew.setOnClickListener(new View.OnClickListener() {
             @Override
