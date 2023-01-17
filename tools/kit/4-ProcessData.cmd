@@ -31,7 +31,7 @@ adb shell "cd /tmp;./makepart.sh"
 adb shell "cd /tmp;./formatpart.sh"
 
 REM Copy flash cmd
-cp .\HW\5-FlashIMG.cmd .
+copy .\HW\5-FlashIMG.cmd .
 
-pause "Reboot to bootloader to flash vendor partition ?"
+pause "Reboot to bootloader ?"
 adb reboot bootloader
