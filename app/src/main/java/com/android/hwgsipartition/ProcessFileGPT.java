@@ -7,12 +7,20 @@ import java.util.Arrays;
 
 public class ProcessFileGPT
 {
+    // Partitions
     Partition[] objFullPart = new Partition[100];
     int iNbFullPart=0;
     Partition[] objModPart = new Partition[50];
     int iNbModPart=0;
     Partition[] objProcPart = new Partition[50];
     int iNbProcPart=0;
+
+    // Size of a sector
+    double iSizeSector=0;
+
+    // Name of the disk
+    // for example /dev/block/mmcblk0
+    String szNameDisk="";
 
     public Partition[] getFullPart() {
         return objFullPart;
@@ -36,34 +44,31 @@ public class ProcessFileGPT
 
     // en parametre le resultat du print parted
     public boolean StartProcess(String sMyInitialGPT, String sMyPartition, Integer iSize) {
-        int iNewSystemSize=7168000; // Pour optimiser la vitesse multiple de 2048
+        double iNewSystemSize=7168000; // Pour optimiser la vitesse multiple de 2048
 
         iNbFullPart=KeepFullPart(sMyInitialGPT,sMyPartition);
 
         if (iNbFullPart>0) {
             Log.println(Log.INFO, "ReadGPT", "iNbFullPart > 0 : " + String.valueOf(iNbFullPart));
 
-            // System size - size of sector = 512 bytes
+            // System size - size of sector = 512 bytes or 4096 (UFS)
             if (iSize==0)
-                iNewSystemSize=4096000; // 2 Go
+                iNewSystemSize=(1073741824/iSizeSector)*2; // 2 Go
             if (iSize==1)
-                iNewSystemSize=5248000; // 2.5 Go
+                iNewSystemSize=(1073741824/iSizeSector)*2.5; // 2.5 Go
             if (iSize==2)
-                iNewSystemSize=6291456; // 3 Go
+                iNewSystemSize=(1073741824/iSizeSector)*3;  // 6291456 =  3 Go
             if (iSize==3)
-                iNewSystemSize=7168000; // 3.5 Go
+                iNewSystemSize=(1073741824/iSizeSector)*3.5; // 3.5 Go
             if (iSize==4)
-                iNewSystemSize=8388608; // 4 Go
-
-            // 6 160 384 sector = 3 008 Mo = 2,93 Go
-            // 7 168 000 sector = 3 500 Mo
+                iNewSystemSize=(1073741824/iSizeSector)*4; // 4 Go
 
             iNbModPart=KeepModPart();
             if (iNbModPart>0) {
                 Log.println(Log.INFO, "ReadGPT", "iNbModPart > 0 :" + String.valueOf(iNbModPart));
                 if (iNbModPart<3)
                     return false;
-                iNbProcPart=KeepProcPart(iNewSystemSize);
+                iNbProcPart=KeepProcPart((int)iNewSystemSize);
                 Log.println(Log.INFO, "ReadGPT", "iNbProcPart :" + String.valueOf(iNbProcPart));
                 if (iNbProcPart==iNbModPart) {
                     return true;
@@ -93,7 +98,7 @@ public class ProcessFileGPT
 
         szClearCmd = szClearCmd +"#!/sbin/sh \n";
         szClearCmd = szClearCmd +" \n";
-        szClearCmd = szClearCmd +"./parted /dev/block/mmcblk0 --script \\\n";
+        szClearCmd = szClearCmd + String.format("./parted %s --script \\\n", szNameDisk);
         if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
                 szClearCmd = szClearCmd + String.format("rm %d \\\n", objProcPart[i].getId());
@@ -158,7 +163,7 @@ public class ProcessFileGPT
         szClearCmd = szClearCmd +"# to list all partitions\n";
         szClearCmd = szClearCmd +"# adb root\n";
         szClearCmd = szClearCmd +"# adb shell\n";
-        szClearCmd = szClearCmd +"# ls -la /dev/block/platform/hi_mci.0/by-name/ \n";
+        szClearCmd = szClearCmd +"# ls -la /dev/block/bootdevice/by-name/ \n";
         szClearCmd = szClearCmd +"\n";
         szClearCmd = szClearCmd +"rm -rf /data/*\n";
         szClearCmd = szClearCmd +"\n";
@@ -182,9 +187,9 @@ public class ProcessFileGPT
     public String GeneratedScriptMake() {
         String szClearCmd="";
 
-        szClearCmd = szClearCmd +"#!/sbin/sh\n";
-        szClearCmd = szClearCmd +"\n";
-        szClearCmd = szClearCmd +"./parted -a optimal /dev/block/mmcblk0 --script \\\n";
+        szClearCmd = szClearCmd +"#!/sbin/sh \n";
+        szClearCmd = szClearCmd +" \n";
+        szClearCmd = szClearCmd + String.format("./parted %s --script \\\n", szNameDisk);
         szClearCmd = szClearCmd +"unit s \\\n";
         if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
@@ -293,6 +298,21 @@ public class ProcessFileGPT
             if (bStartTable) {
                 Log.println(Log.INFO, "ReadGPT", "  " + szLine);
                 strNewPartition[numberOfItems++] = szLine;
+            }
+            else
+            {
+                // Disk /dev/block/sdd: 15616000s
+                // Sector size (logical/physical): 4096B/4096B
+                if (szNameDisk.isEmpty())
+                    if (szLine.startsWith("Disk")) {
+                        szNameDisk=szLine.substring(5,szLine.indexOf(":"));
+                    }
+                if (szLine.startsWith("Sector size (logical/physical)")) {
+                    String szTmp = szLine.substring(32);
+                    String szSectorSize=szTmp.substring(0,szTmp.indexOf("/")-1);
+
+                    iSizeSector=Integer.parseInt(szSectorSize);
+                }
             }
 
             // On a trouvé l'entete du début de table des partitions
