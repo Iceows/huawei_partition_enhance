@@ -37,6 +37,6 @@ copy .\HW\5-FlashIMG.cmd
 pause "Reboot to bootloader ?"
 
 adb reboot bootloader
-fastboot flash userdata userdata.img
+fastboot flash userdata ./userdata/userdata-huawei.img
 
 echo "You can now start 5-FlashIMG.cmd"

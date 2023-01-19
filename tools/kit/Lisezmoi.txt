@@ -20,7 +20,7 @@
 	Fermer HWGSIPartition
 6) Recuperer les fichiers générés par le programme HWGSIPartition et vérifier que vous avez bien un repertoire HW désormais avec 7 fichiers.
 	3-GetIMG.cmd
-7) Démarrer sous TWRP
+7) Démarrer sous TWRP. Vérifier que votre partition data est bien monté
 8) Executer le script 
 	4-ProcessData.cmd
 9) Executer le script 
