@@ -120,7 +120,7 @@ public class ProcessFileGPT
                 if (!objProcPart[i].getName().equals("userdata") &&
                         !objProcPart[i].getName().equals("system") &&
                         !objProcPart[i].getName().equals("system_a") )
-                    szClearCmd = szClearCmd + String.format("fastboot flash %s .\\data\\%s.img  \n", objProcPart[i].getName(),objProcPart[i].getName());
+                    szClearCmd = szClearCmd + String.format("fastboot flash %s .\\HW-IMG\\%s.img  \n", objProcPart[i].getName(),objProcPart[i].getName());
             }
         }
         Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
@@ -138,10 +138,10 @@ public class ProcessFileGPT
         if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
                 if ((objProcPart[i].getTypeFs().equals("ext2")) || (objProcPart[i].getTypeFs().equals("ext4")))
-                    szClearCmd = szClearCmd + String.format("/tmp/mke2fs.iceows -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("/sbin/mke2fs -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
                 if (objProcPart[i].getTypeFs().equals("f2fs")) {
-                    szClearCmd = szClearCmd + String.format("/tmp/mkfs.iceows.f2fs -l data %s\n", objProcPart[i].getPname());
-                    szClearCmd = szClearCmd + String.format("/tmp/fsck.iceows.f2fs %s\n", objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("/tmp/mkfs.f2fs -l data %s\n", objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("/tmp/fsck.f2fs %s\n", objProcPart[i].getPname());
                 }
                 //if (objProcPart[i].getTypeFs().equals(""))
                 //    szClearCmd = szClearCmd + String.format("/sbin/mkfs.erofs %s\n", objProcPart[i].getPname());
@@ -165,7 +165,7 @@ public class ProcessFileGPT
         szClearCmd = szClearCmd +"# adb shell\n";
         szClearCmd = szClearCmd +"# ls -la /dev/block/bootdevice/by-name/ \n";
         szClearCmd = szClearCmd +"\n";
-        szClearCmd = szClearCmd +"rm -rf /data/*\n";
+        szClearCmd = szClearCmd +"rm -rf /data/HW-IMG/*\n";
         szClearCmd = szClearCmd +"\n";
 
 
@@ -174,8 +174,11 @@ public class ProcessFileGPT
                 // don't backup system or userdata
                 if (!objProcPart[i].getName().equals("userdata") &&
                         !objProcPart[i].getName().equals("system") &&
-                        !objProcPart[i].getName().equals("system_a") )
-                    szClearCmd = szClearCmd + String.format("dd if=%s of=/data/%s.img \n", objProcPart[i].getPname(),objProcPart[i].getName());
+                        !objProcPart[i].getName().equals("system_a") ) {
+                    szClearCmd = szClearCmd + String.format("umount /%s \n", objProcPart[i].getName());
+                    szClearCmd = szClearCmd + String.format("dd if=%s of=/data/HW-IMG/%s.img \n", objProcPart[i].getPname(), objProcPart[i].getName());
+
+                }
             }
         }
         return szClearCmd;
