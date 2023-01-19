@@ -319,6 +319,10 @@ public class ProcessFileGPT
             }
 
             // On a trouvé l'entete du début de table des partitions
+            // Kirin 710
+            if (szLine.equals("Number  Start     End        Size       File system  Name                 Flags")) {
+                bStartTable = true;
+            }
             // PRA-LX1
             if (szLine.equals("Number  Start      End        Size       File system  Name               Flags")) {
                     bStartTable = true;
@@ -351,9 +355,10 @@ public class ProcessFileGPT
                 iLineLength=szLine.length();
                 // Error scan
                 if ((szLine.length()!=81)
+                        && (szLine.length()!=82)
                         && (szLine.length()!=83)
                         && (szLine.length()!=85)) {
-                    Log.println(Log.WARN, "ReadGPT"," Incorrect line len : " + szLine.length() + " != 81 or 83 or 85");
+                    Log.println(Log.WARN, "ReadGPT"," Incorrect line len : " + szLine.length() + " != 81, 82, 83, 85");
                     return iCurrentItem;
                 }
 
@@ -365,15 +370,27 @@ public class ProcessFileGPT
                     objFullPart[iCurrentItem].setId(Integer.parseInt(szTmp));
                 }
 
+
+                //if (szLine.equals("Number  Start     End        Size       File system  Name                 Flags")) {
+                // PRA-LX1
+                //if (szLine.equals("Number  Start      End        Size       File system  Name               Flags")) {
+
                 // Start sector
-                szTmp=szLine.substring(8, 18).trim();
+                if (iLineLength==82)
+                    szTmp=szLine.substring(8, 17).trim();
+                else
+                    szTmp=szLine.substring(8, 18).trim();
                 if (!isEmpty(szTmp)) {
                     String szTmp1=szTmp.replace('s', ' ').trim();
                     objFullPart[iCurrentItem].setStartSectorPos(Integer.parseInt(szTmp1));
                 }
 
                 // End sector
-                szTmp=szLine.substring(19, 28).trim();
+                if (iLineLength==82)
+                    szTmp=szLine.substring(18, 27).trim();
+                else
+                    szTmp=szLine.substring(19, 28).trim();
+
                 if (!isEmpty(szTmp)) {
                     String szTmp1=szTmp.replace('s', ' ').trim();
                     objFullPart[iCurrentItem].setEndSectorPos(Integer.parseInt(szTmp1));
@@ -382,6 +399,8 @@ public class ProcessFileGPT
                 // Nb de sector
                 if (iLineLength==81)
                     szTmp=szLine.substring(29, 40).trim();
+                if (iLineLength==82)
+                    szTmp=szLine.substring(28, 39).trim();
                 if (iLineLength==83)
                     szTmp=szLine.substring(31, 42).trim();
                 if (iLineLength==85)
@@ -395,6 +414,8 @@ public class ProcessFileGPT
                 // Type
                 if (iLineLength==81)
                     szTmp=szLine.substring(41, 53).trim();
+                if (iLineLength==82)
+                    szTmp=szLine.substring(40, 52).trim();
                 if (iLineLength==83)
                     szTmp=szLine.substring(43, 55).trim();
                 if (iLineLength==85)
@@ -406,6 +427,8 @@ public class ProcessFileGPT
                 // Name
                 if (iLineLength==81)
                     szTmp=szLine.substring(54, 72).trim();
+                if (iLineLength==82)
+                    szTmp=szLine.substring(53, 73).trim();
                 if (iLineLength==83)
                     szTmp=szLine.substring(56, 74).trim();
                 if (iLineLength==85)
@@ -417,6 +440,8 @@ public class ProcessFileGPT
                 // Flags
                 if (iLineLength==81)
                     szTmp=szLine.substring(73, 81).trim();
+                if (iLineLength==82)
+                    szTmp=szLine.substring(74, 82).trim();
                 if (iLineLength==83)
                     szTmp=szLine.substring(75, 83).trim();
                 if (iLineLength==85)

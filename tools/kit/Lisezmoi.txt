@@ -8,7 +8,7 @@
 0) Pre-requis : Vous devez mettre dans le repertoire twrp, l'image du recovery d'origine huawei (RECOVERY_RAMDISK) et votre recovery twrp
 1) Démarrer sous TWRP
 2) Executer le script suivant sous cmd en mode administrateur
-	1-GetData.cmd
+	1-GetDataUFS.cmd ou 1-GetDataMMC.cmd
 3) Démarrer le telephone sous Android : adb reboot
 4) Activer le partage de fichier via USB et le debuggage via adb (dans le mode Developer)
    Executer le script suivant, il va installer le programme HWGSIPartition et les fichiers de parametrage qui correspondent a votre appareil
@@ -20,18 +20,17 @@
 	Fermer HWGSIPartition
 6) Recuperer les fichiers générés par le programme HWGSIPartition et vérifier que vous avez bien un repertoire HW désormais avec 7 fichiers.
 	3-GetIMG.cmd
-7) Démarrer sous TWRP. Vérifier que votre partition data est bien monté
-8) Executer le script 
+7) Démarrer sous TWRP. Vérifier que votre partition data est bien montée
+8) Executer le script qui va retailler les partitions
 	4-ProcessData.cmd
-9) Executer le script 
+9) Executer le script qui va reflasher les images des partitions modifiés
 	5-FlashIMG.cmd
-10) Redemarrer sous recovery (huawei)
-11) Reset to factory
-12) Redemarrer sous fastboot
+10) Démarrer sous TWRP et verifier que vous pouvez monter la partition data et la partition vendor
+11) Démarrer en mode bootloader
 
 ------------------
 
-Vous pouvez desormais installer votre twrp et votre image system
+Vous pouvez desormais installer votre twrp et votre image system LeaOS
 
 
 
