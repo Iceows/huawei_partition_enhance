@@ -5,10 +5,9 @@
 #
 ############################################################
 
-0) Pre-requis : Vous devez mettre dans le repertoire twrp, l'image du recovery d'origine huawei (RECOVERY_RAMDISK) et votre recovery twrp
 1) Démarrer sous TWRP
 2) Executer le script suivant sous cmd en mode administrateur
-	1-GetDataUFS.cmd ou 1-GetDataMMC.cmd
+	1-GetDataUFS.cmd (pour les telephones a mémoire UFS) ou 1-GetDataMMC.cmd (pour les téléphones a mémoire eMMC)
 3) Démarrer le telephone sous Android : adb reboot
 4) Activer le partage de fichier via USB et le debuggage via adb (dans le mode Developer)
    Executer le script suivant, il va installer le programme HWGSIPartition et les fichiers de parametrage qui correspondent a votre appareil
