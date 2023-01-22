@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
                 //Android 11 with a-only system
                 ActivityCompat.requestPermissions(
                         this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.MANAGE_EXTERNAL_STORAGE},
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
                         STORAGE_PERMISSION_CODE
                 );
             }
@@ -352,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
             //Android is below 11(R)
             ActivityCompat.requestPermissions(
                     this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.MANAGE_EXTERNAL_STORAGE},
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
                     STORAGE_PERMISSION_CODE
             );
         }

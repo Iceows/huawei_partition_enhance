@@ -1,5 +1,7 @@
 echo "HWGSIPartition - Part 1/5"
 
+mkdir phone
+
 adb root
 adb push ./arm64/parted /tmp
 adb push ./sh/keepdata-ufs.sh /tmp
