@@ -1,0 +1,67 @@
+Model: MMC GD6BMB (sd/mmc)
+Disk /dev/block/mmcblk0: 61071360s
+Sector size (logical/physical): 512B/512B
+Partition Table: gpt
+Disk Flags: 
+
+Number  Start      End        Size       File system  Name               Flags
+ 1      1024s      1535s      512s                    vrl                msftdata
+ 2      1536s      2047s      512s                    vrl_backup         msftdata
+ 3      2048s      2559s      512s                    fw_lpm3            msftdata
+ 4      2560s      4095s      1536s                   frp                msftdata
+ 5      4096s      12287s     8192s                   fastboot           msftdata
+ 6      12288s     20479s     8192s                   modemnvm_factory   msftdata
+ 7      20480s     32767s     12288s                  nvme               msftdata
+ 8      32768s     163839s    131072s                 oeminfo            msftdata
+ 9      163840s    172031s    8192s                   reserved3          msftdata
+10      172032s    180223s    8192s                   modemnvm_backup    msftdata
+11      180224s    196607s    16384s     ext4         modemnvm_img       msftdata
+12      196608s    204799s    8192s                   modemnvm_system    msftdata
+13      204800s    270335s    65536s     ext4         secure_storage     msftdata
+14      270336s    274431s    4096s                   reserved4          msftdata
+15      274432s    278527s    4096s                   reserved5          msftdata
+16      278528s    282623s    4096s                   persist            msftdata
+17      282624s    311295s    28672s     ext4         modem_secure       msftdata
+18      311296s    376831s    65536s     ext4         modem_om           msftdata
+19      376832s    507903s    131072s    ext4         splash2            msftdata
+20      507904s    511999s    4096s                   misc               msftdata
+21      512000s    561151s    49152s                  modemnvm_update    msftdata
+22      561152s    655359s    94208s                  reserved2          msftdata
+23      655360s    671743s    16384s     ext4         preload            msftdata
+24      671744s    679935s    8192s                   teeos              msftdata
+25      679936s    684031s    4096s                   trustfirmware      msftdata
+26      684032s    716799s    32768s                  sensorhub          msftdata
+27      716800s    741375s    24576s                  fw_hifi            msftdata
+28      741376s    790527s    49152s                  erecovery_kernel   msftdata
+29      790528s    856063s    65536s                  erecovery_ramdisk  msftdata
+30      856064s    888831s    32768s                  erecovery_vendor   msftdata
+31      888832s    937983s    49152s                  kernel             msftdata
+32      937984s    962559s    24576s                  eng_system         msftdata
+33      962560s    1028095s   65536s                  recovery_ramdisk   msftdata
+34      1028096s   1060863s   32768s                  recovery_vendor    msftdata
+35      1060864s   1118207s   57344s                  dts                msftdata
+36      1118208s   1126399s   8192s                   dto                msftdata
+37      1126400s   1323007s   196608s    ext4         modem_fw           msftdata
+38      1323008s   1325055s   2048s                   recovery_vbmeta    msftdata
+39      1325056s   1327103s   2048s                   erecovery_vbmeta   msftdata
+40      1327104s   1351679s   24576s                  eng_vendor         msftdata
+41      1351680s   1384447s   32768s                  dfx                msftdata
+42      1384448s   1392639s   8192s                   vbmeta             msftdata
+43      1392640s   1654783s   262144s    ext4         cache              msftdata
+44      1654784s   1916927s   262144s    ext4         odm                msftdata
+45      1916928s   1921023s   4096s                   hisitest0          msftdata
+46      1921024s   1925119s   4096s                   hisitest1          msftdata
+47      1925120s   1933311s   8192s                   hisitest2          msftdata
+48      1933312s   1998847s   65536s     ext4         patch              msftdata
+49      1998848s   2002943s   4096s                   bootfail_info      msftdata
+50      2002944s   2035711s   32768s                  rrecord            msftdata
+51      2035712s   2097151s   61440s                  reserved9          msftdata
+52      2097152s   8388607s   6291456s   ext2         system             msftdata
+53      8388608s   10649599s  2260992s   ext4         preas              msftdata
+54      10649600s  10715135s  65536s     ext4         preavs             msftdata
+55      10715136s  10993663s  278528s    ext4         cust               msftdata
+56      10993664s  11059199s  65536s     ext4         version            msftdata
+57      11059200s  12255231s  1196032s   ext4         vendor             msftdata
+58      12255232s  13352959s  1097728s   ext4         product            msftdata
+59      13352960s  61071359s  47718400s  f2fs         userdata           msftdata
+

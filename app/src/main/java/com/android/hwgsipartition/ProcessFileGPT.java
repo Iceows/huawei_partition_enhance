@@ -3,7 +3,10 @@ package com.android.hwgsipartition;
 import android.util.Log;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class ProcessFileGPT
 {
@@ -14,6 +17,14 @@ public class ProcessFileGPT
     int iNbModPart=0;
     Partition[] objProcPart = new Partition[50];
     int iNbProcPart=0;
+
+    // Point de montage
+    List<MountPoint> lstMount = new ArrayList<>();
+
+
+    // Information pour determiner chaque item dans le fichier GPT
+    Integer[] iInfosPos = new Integer[20];
+
 
     // Size of a sector
     double iSizeSector=0;
@@ -46,6 +57,10 @@ public class ProcessFileGPT
     public boolean StartProcess(String sMyInitialGPT, String sMyPartition, Integer iSize) {
         double iNewSystemSize=7168000; // Pour optimiser la vitesse multiple de 2048
 
+        // Charge la liste des points de montage
+        InitListMount(sMyPartition);
+
+        // Recupere le nombre de partition total et les infos pour chaque partition
         iNbFullPart=KeepFullPart(sMyInitialGPT,sMyPartition);
 
         if (iNbFullPart>0) {
@@ -59,9 +74,9 @@ public class ProcessFileGPT
             if (iSize==2)
                 iNewSystemSize=(1073741824/iSizeSector)*3;  // 6291456 =  3 Go
             if (iSize==3)
-                iNewSystemSize=(1073741824/iSizeSector)*3.5; // 3.5 Go
+                iNewSystemSize=(1073741824/iSizeSector)*3.5; // 7340032 = 3.5 Go
             if (iSize==4)
-                iNewSystemSize=(1073741824/iSizeSector)*4; // 4 Go
+                iNewSystemSize=(1073741824/iSizeSector)*4; // 8388608 = 4 Go
 
             iNbModPart=KeepModPart();
             if (iNbModPart>0) {
@@ -163,7 +178,7 @@ public class ProcessFileGPT
         szClearCmd = szClearCmd +"# to list all partitions\n";
         szClearCmd = szClearCmd +"# adb root\n";
         szClearCmd = szClearCmd +"# adb shell\n";
-        szClearCmd = szClearCmd +"# ls -la /dev/block/bootdevice/by-name/ \n";
+        szClearCmd = szClearCmd +"# ls -la /dev/block/bootdevice/by-name  | grep \"\\->\" \n";
         szClearCmd = szClearCmd +"\n";
         szClearCmd = szClearCmd +"rm -rf /data/HW-IMG/*\n";
         szClearCmd = szClearCmd +"\n";
@@ -318,23 +333,48 @@ public class ProcessFileGPT
                 }
             }
 
-            // On a trouvé l'entete du début de table des partitions
-            // Kirin 710
-            if (szLine.equals("Number  Start     End        Size       File system  Name                 Flags")) {
-                bStartTable = true;
-            }
-            // PRA-LX1
-            if (szLine.equals("Number  Start      End        Size       File system  Name               Flags")) {
+            // Search l'entete
+            if (szLine.startsWith("Number")) {
+                int i1=0;
+
+                if (szLine.endsWith("Flags"))
                     bStartTable = true;
+                else
+                    bStartTable = false;
+
+                // On a trouvé l'entete, on recupere la position de chaque element
+                if (bStartTable) {
+                    iInfosPos[0]=0;
+
+                    i1=szLine.indexOf("Start",i1);
+                    if (i1==-1) return 0;
+                    iInfosPos[1]=i1;
+
+                    i1=szLine.indexOf("End",i1);
+                    if (i1==-1) return 0;
+                    iInfosPos[2]=i1;
+
+                    i1=szLine.indexOf("Size",i1);
+                    if (i1==-1) return 0;
+                    iInfosPos[3]=i1;
+
+                    i1=szLine.indexOf("File system",i1);
+                    if (i1==-1) return 0;
+                    iInfosPos[4]=i1;
+
+                    i1=szLine.indexOf("Name",i1);
+                    if (i1==-1) return 0;
+                    iInfosPos[5]=i1;
+
+                    i1=szLine.indexOf("Flags",i1);
+                    if (i1==-1) return 0;
+                    iInfosPos[6]=i1;
+
+                    // End
+                    iInfosPos[7]=szLine.length();
+                }
             }
-            // ANE-LX1
-            if (szLine.equals("Number  Start      End         Size        File system  Name               Flags")) {
-                bStartTable = true;
-            }
-            // POT-LX1 (86)
-            if (szLine.equals("Number  Start      End         Size        File system  Name                 Flags")) {
-                bStartTable = true;
-            }
+
         }
 
         if (bStartTable!=true)
@@ -354,98 +394,54 @@ public class ProcessFileGPT
 
                 iLineLength=szLine.length();
                 // Error scan
-                if ((szLine.length()!=81)
-                        && (szLine.length()!=82)
-                        && (szLine.length()!=83)
-                        && (szLine.length()!=85)) {
-                    Log.println(Log.WARN, "ReadGPT"," Incorrect line len : " + szLine.length() + " != 81, 82, 83, 85");
+                if (szLine.length()<80) {
+                    Log.println(Log.WARN, "ReadGPT"," Incorrect line len : " + szLine.length() + " < 80");
                     return iCurrentItem;
                 }
 
                 objFullPart[iCurrentItem] = new Partition();
 
                 // partition number
-                szTmp=szLine.substring(0, 7).trim();
+                szTmp=szLine.substring(iInfosPos[0], iInfosPos[1]-1).trim();
                 if (!isEmpty(szTmp)) {
                     objFullPart[iCurrentItem].setId(Integer.parseInt(szTmp));
                 }
 
-
-                //if (szLine.equals("Number  Start     End        Size       File system  Name                 Flags")) {
-                // PRA-LX1
-                //if (szLine.equals("Number  Start      End        Size       File system  Name               Flags")) {
-
                 // Start sector
-                if (iLineLength==82)
-                    szTmp=szLine.substring(8, 17).trim();
-                else
-                    szTmp=szLine.substring(8, 18).trim();
+                szTmp=szLine.substring(iInfosPos[1], iInfosPos[2]-1).trim();
                 if (!isEmpty(szTmp)) {
                     String szTmp1=szTmp.replace('s', ' ').trim();
                     objFullPart[iCurrentItem].setStartSectorPos(Integer.parseInt(szTmp1));
                 }
 
                 // End sector
-                if (iLineLength==82)
-                    szTmp=szLine.substring(18, 27).trim();
-                else
-                    szTmp=szLine.substring(19, 28).trim();
-
+                szTmp=szLine.substring(iInfosPos[2], iInfosPos[3]-1).trim();
                 if (!isEmpty(szTmp)) {
                     String szTmp1=szTmp.replace('s', ' ').trim();
                     objFullPart[iCurrentItem].setEndSectorPos(Integer.parseInt(szTmp1));
                 }
 
                 // Nb de sector
-                if (iLineLength==81)
-                    szTmp=szLine.substring(29, 40).trim();
-                if (iLineLength==82)
-                    szTmp=szLine.substring(28, 39).trim();
-                if (iLineLength==83)
-                    szTmp=szLine.substring(31, 42).trim();
-                if (iLineLength==85)
-                    szTmp=szLine.substring(31, 42).trim();
-
+                szTmp=szLine.substring(iInfosPos[3], iInfosPos[4]-1).trim();
                 if (!isEmpty(szTmp)) {
                     String szTmp1=szTmp.replace('s', ' ').trim();
                     objFullPart[iCurrentItem].setNbSector(Integer.parseInt(szTmp1));
                 }
 
                 // Type
-                if (iLineLength==81)
-                    szTmp=szLine.substring(41, 53).trim();
-                if (iLineLength==82)
-                    szTmp=szLine.substring(40, 52).trim();
-                if (iLineLength==83)
-                    szTmp=szLine.substring(43, 55).trim();
-                if (iLineLength==85)
-                    szTmp=szLine.substring(43, 55).trim();
+                szTmp=szLine.substring(iInfosPos[4], iInfosPos[5]-1).trim();
                 if (!isEmpty(szTmp)) {
                     objFullPart[iCurrentItem].setTypeFs(szTmp);
                 }
 
                 // Name
-                if (iLineLength==81)
-                    szTmp=szLine.substring(54, 72).trim();
-                if (iLineLength==82)
-                    szTmp=szLine.substring(53, 73).trim();
-                if (iLineLength==83)
-                    szTmp=szLine.substring(56, 74).trim();
-                if (iLineLength==85)
-                    szTmp=szLine.substring(56, 74).trim();
+                szTmp=szLine.substring(iInfosPos[5], iInfosPos[6]-1).trim();
                 if (!isEmpty(szTmp)) {
                     objFullPart[iCurrentItem].setName(szTmp);
                 }
 
                 // Flags
-                if (iLineLength==81)
-                    szTmp=szLine.substring(73, 81).trim();
-                if (iLineLength==82)
-                    szTmp=szLine.substring(74, 82).trim();
-                if (iLineLength==83)
-                    szTmp=szLine.substring(75, 83).trim();
-                if (iLineLength==85)
-                    szTmp=szLine.substring(77, 85).trim();
+                szTmp=szLine.substring(iInfosPos[6]).trim();
                 if (!isEmpty(szTmp)) {
                     objFullPart[iCurrentItem].setFlagFs(szTmp);
                 }
@@ -459,17 +455,8 @@ public class ProcessFileGPT
                 if (szName.indexOf("_a")!=-1)
                     szName=szName.substring(0,szName.length()-2);
 
-                for (String szLine2 : strFullPartitionMnt) {
-                    i=szLine2.indexOf(szName +  " -> ");
-                    if (i>-1) {
-                        // Found
-                        int istart=szLine2.indexOf(" -> ");
-                        if (istart>-1) {
-                            String szPointName = szLine2.substring(istart + 4);
-                            objFullPart[iCurrentItem].setPname(szPointName);
-                        }
-                    }
-                }
+                MountPoint objMount = findMountPointbyName(szName);
+                objFullPart[iCurrentItem].setPname(objMount.getPname());
 
                 iCurrentItem++;
             }
@@ -481,5 +468,36 @@ public class ProcessFileGPT
 
 	public static boolean isEmpty(String str) {
         return str == null || str.length() == 0;
+    }
+
+    public void InitListMount(String szMountString)
+    {
+        int iCurrentItem=0;
+        String[] strFullPartitionMnt = szMountString.split("\n");
+
+
+        for (String szLine : strFullPartitionMnt) {
+            int istart = szLine.indexOf(" -> ");
+
+            if (istart > -1) {
+                String szPointName = szLine.substring(istart + 4);
+                String szLine2 = szLine.substring(0,istart);
+
+                int istart1 = szLine2.lastIndexOf(' ');
+                String szName  = szLine.substring(istart1+1,istart);
+                lstMount.add(new MountPoint(0,szName,szPointName));
+            }
+        }
+    }
+
+    public MountPoint findMountPointbyName(String name) {
+        Iterator<MountPoint> iterator = lstMount.iterator();
+        while (iterator.hasNext()) {
+            MountPoint ptMount = iterator.next();
+            if (ptMount.getName().equals(name)) {
+                return ptMount;
+            }
+        }
+        return null;
     }
 }
