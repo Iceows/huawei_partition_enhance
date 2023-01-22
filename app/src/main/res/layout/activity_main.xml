@@ -37,17 +37,24 @@
         tools:layout_editor_absoluteX="0dp">
 
 
-
         <CheckBox
             android:id="@+id/chkAOnly"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="Android 11 AOnly / Android 8" />
+            android:layout_height="30dp"
+            android:text="Android 11 AOnly"
+            android:textSize="14sp" />
 
         <Spinner
             android:id="@+id/systemsize_spinner"
             android:layout_width="match_parent"
-            android:layout_height="50dp" />
+            android:layout_height="30dp" />
+
+        <TextView
+            android:id="@+id/txtMemType"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="  Internal Storage : eMMC/UFS ?"
+            android:textSize="14sp" />
 
         <TableLayout
             android:id="@+id/tablePartMod"
@@ -71,6 +78,8 @@
             </TableRow>
 
         </TableLayout>
+
+
     </LinearLayout>
 
     <LinearLayout

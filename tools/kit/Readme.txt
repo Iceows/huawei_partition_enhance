@@ -7,7 +7,7 @@
 
 1) Boot into TWRP, plug USB cable between phone and PC
 2) On your PC, run the following script under cmd in administrator mode
-	1-GetDataUFS.cmd (for UFS memory phones) or 1-GetDataMMC.cmd (for eMMC memory phones)
+	1-GetData.cmd
 3) Start the phone under Android (adb reboot)
 4) On the phone Enable file transfert via USB and debugging via adb (You can enable adb in Developer mode)
    Run the following script, it will install the HWGSIPartition program and the settings files that correspond to your device

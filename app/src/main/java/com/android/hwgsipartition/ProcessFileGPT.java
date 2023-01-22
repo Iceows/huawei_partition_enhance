@@ -77,6 +77,10 @@ public class ProcessFileGPT
                 iNewSystemSize=(1073741824/iSizeSector)*3.5; // 7340032 = 3.5 Go
             if (iSize==4)
                 iNewSystemSize=(1073741824/iSizeSector)*4; // 8388608 = 4 Go
+            if (iSize==5)
+                iNewSystemSize=(1073741824/iSizeSector)*4.5;
+            if (iSize==6)
+                iNewSystemSize=(1073741824/iSizeSector)*5;
 
             iNbModPart=KeepModPart();
             if (iNbModPart>0) {

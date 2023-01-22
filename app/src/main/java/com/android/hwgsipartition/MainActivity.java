@@ -48,13 +48,16 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
     // FILE PURPOSE
-    private static final String HWFILEGPT = "HuaweiFileGPT.txt";
+    private static final String HWFILEGPTMMC = "HuaweiFileGPT-MMC.txt";
+    private static final String HWFILEGPTUFS = "HuaweiFileGPT-UFS.txt";
     private static final String HWFILEPARTITION = "HuaweiFilePart.txt";
 
     //PERMISSION request constant, assign any value
     private static final int STORAGE_PERMISSION_CODE = 100;
 
     private static final String TAG = "ReadGPT";
+
+    int iMemType=0;
 
     Button btnCreateNew, btnReadPhone;
     Spinner spnSystemSize;
@@ -94,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 R.array.systemsize_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnSystemSize.setAdapter(adapter);
+        spnSystemSize.setSelection(3);
 
 
         btnCreateNew = (Button) findViewById(R.id.btnCreateNewGPT);//get id of button 1
@@ -129,8 +133,14 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("ReadGPT", sMyInitialGPT);
 
                     Button btCreate = (Button) findViewById(R.id.btnCreateNewGPT);
-
                     btCreate.setEnabled(FillTable(view));
+
+
+                    TextView textView = (TextView)findViewById(R.id.txtMemType);
+                    if( iMemType==1)
+                        textView.setText("  Internal Storage : eMMC");
+                    if( iMemType==2)
+                        textView.setText("  Internal Storage : UFS");
 
 
                 } else {
@@ -153,8 +163,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (objProcess.StartProcess(sMyInitialGPT,sMyPartitions,indexValue) == false)
             return false;
-
-
 
         // Remplit les tableaux
         objPartProc = objProcess.getProcPart();
@@ -265,10 +273,17 @@ public class MainActivity extends AppCompatActivity {
     private boolean readPartFromStorage() {
         File directory;
 
+
         directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS+"/HW");
 
         sMyPartitions=objReadWrite.ReadMyFile(directory.toString() + "/" + HWFILEPARTITION);
-        sMyInitialGPT=objReadWrite.ReadMyFile(directory.toString() + "/" + HWFILEGPT);
+        sMyInitialGPT=objReadWrite.ReadMyFile(directory.toString() + "/" + HWFILEGPTUFS);
+
+        if (sMyInitialGPT.length()<60) {
+            sMyInitialGPT = objReadWrite.ReadMyFile(directory.toString() + "/" + HWFILEGPTMMC);
+            iMemType=1;
+        }
+        else iMemType=2;
 
         if (!sMyPartitions.isEmpty() && !sMyInitialGPT.isEmpty() )
             return true;
