@@ -53,6 +53,8 @@
             android:id="@+id/txtMemType"
             android:layout_width="match_parent"
             android:layout_height="30dp"
+            android:paddingStart="5pt"
+            android:paddingEnd="5pt"
             android:text="  Internal Storage : eMMC/UFS ?"
             android:textSize="14sp" />
 

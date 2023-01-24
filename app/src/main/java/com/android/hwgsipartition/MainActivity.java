@@ -138,9 +138,9 @@ public class MainActivity extends AppCompatActivity {
 
                     TextView textView = (TextView)findViewById(R.id.txtMemType);
                     if( iMemType==1)
-                        textView.setText("  Internal Storage : eMMC");
+                        textView.setText(String.format("Internal Storage : eMMC (%s)",  objProcess.szNameDisk));
                     if( iMemType==2)
-                        textView.setText("  Internal Storage : UFS");
+                        textView.setText(String.format("Internal Storage : UFS (%s)",  objProcess.szNameDisk));
 
 
                 } else {

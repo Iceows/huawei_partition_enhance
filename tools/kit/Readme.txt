@@ -1,10 +1,12 @@
-################################################# ##########
+############################################################
 #
-# Huawei GSI Partition kit - Version 0.5
-# By Iceows
+#   Huawei GSI Partition kit - Version 0.6
+#   Par Iceows
 #
-################################################# ##########
+############################################################
 
+0) WARNING ----- This operation deletes the data partition (your data), you must make a backup before -----------
+ 
 1) Boot into TWRP, plug USB cable between phone and PC
 2) On your PC, run the following script under cmd in administrator mode
 	1-GetData.cmd

@@ -6,6 +6,7 @@
 ############################################################
 
 0) ATTENTION ----- Cette opération supprime la partition data (vos données), vous devez faire une sauvegarde avant -----------
+
 1) Démarrer sous TWRP
 2) Executer le script suivant sous cmd en mode administrateur
 	1-GetData.cmd

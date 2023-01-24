@@ -21,17 +21,15 @@ public class ProcessFileGPT
     // Point de montage
     List<MountPoint> lstMount = new ArrayList<>();
 
-
     // Information pour determiner chaque item dans le fichier GPT
     Integer[] iInfosPos = new Integer[20];
-
 
     // Size of a sector
     double iSizeSector=0;
 
     // Name of the disk
     // for example /dev/block/mmcblk0
-    String szNameDisk="";
+    public String szNameDisk="";
 
     public Partition[] getFullPart() {
         return objFullPart;
