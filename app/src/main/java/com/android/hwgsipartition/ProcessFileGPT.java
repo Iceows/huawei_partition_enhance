@@ -194,9 +194,13 @@ public class ProcessFileGPT
                 if (!objProcPart[i].getName().equals("userdata") &&
                         !objProcPart[i].getName().equals("system") &&
                         !objProcPart[i].getName().equals("system_a") ) {
+                    szClearCmd = szClearCmd +"# umount partition before dump\n";
+                    szClearCmd = szClearCmd + String.format("if grep -qs '%s' /proc/mounts; then\n", objProcPart[i].getPname());
                     szClearCmd = szClearCmd + String.format("umount /%s \n", objProcPart[i].getName());
+                    szClearCmd = szClearCmd + "fi\n";
+                    szClearCmd = szClearCmd +"# dump data\n";
                     szClearCmd = szClearCmd + String.format("dd if=%s of=/data/HW-IMG/%s.img \n", objProcPart[i].getPname(), objProcPart[i].getName());
-
+                    szClearCmd = szClearCmd +"\n";
                 }
             }
         }
@@ -240,7 +244,7 @@ public class ProcessFileGPT
         iNewNbSector=iNewSystemSize;
         objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
         objProcPart[iCurrentItem].setNbSector(iNewNbSector);
-        objProcPart[iCurrentItem].setTypeFs("ext2");
+        objProcPart[iCurrentItem].setTypeFs("ext4");
         objProcPart[iCurrentItem].LogInfo();
 
 
@@ -251,10 +255,6 @@ public class ProcessFileGPT
             iNewEndSector=objProcPart[iCurrentItem].getEndSectorPos()+iIncreaseSize;
             objProcPart[iCurrentItem].setStartSectorPos(iNewStartSector);
             objProcPart[iCurrentItem].setEndSectorPos(iNewEndSector);
-            String szTypeFS=objProcPart[iCurrentItem].getTypeFs();
-            // erofs or ext4
-            if (szTypeFS.equals(""))
-                objProcPart[iCurrentItem].setTypeFs("ext4");
             objProcPart[iCurrentItem].LogInfo();
         }
 
