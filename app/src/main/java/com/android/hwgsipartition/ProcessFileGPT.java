@@ -134,10 +134,9 @@ public class ProcessFileGPT
         szClearCmd = szClearCmd +" \n";
         if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
-                if (!objProcPart[i].getName().equals("userdata") &&
-                        !objProcPart[i].getName().equals("system") &&
-                        !objProcPart[i].getName().equals("system_a") )
+                if (!objProcPart[i].getName().equals("userdata") ) {
                     szClearCmd = szClearCmd + String.format("fastboot flash %s .\\HW-IMG\\%s.img  \n", objProcPart[i].getName(),objProcPart[i].getName());
+                }
             }
         }
         Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
@@ -189,13 +188,29 @@ public class ProcessFileGPT
         if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
                 // don't backup system or userdata
-                if (!objProcPart[i].getName().equals("userdata") &&
-                        !objProcPart[i].getName().equals("system") &&
-                        !objProcPart[i].getName().equals("system_a") ) {
+                if (!objProcPart[i].getName().equals("userdata")) {
+                    String szNameFolder="";
+
+                    // replace system_a or _b by system
+                    if (objProcPart[i].getName().equals("system") ||
+                            objProcPart[i].getName().equals("system_a") ||
+                            objProcPart[i].getName().equals("system_b")) {
+                        szNameFolder="system";
+                    }
+                    else {
+                        szNameFolder = objProcPart[i].getName();
+                    }
+
                     szClearCmd = szClearCmd +"# umount partition before dump\n";
-                    szClearCmd = szClearCmd + String.format("if grep -qs '%s' /proc/mounts; then\n", objProcPart[i].getPname());
-                    szClearCmd = szClearCmd + String.format("umount /%s \n", objProcPart[i].getName());
-                    szClearCmd = szClearCmd + "fi\n";
+
+                    if (szNameFolder.equals("system")) {
+                        szClearCmd = szClearCmd +  "mount|grep -q /system && umount /system\n";
+                        szClearCmd = szClearCmd +  "mount|grep -q /system && umount /system_root\n";
+                    }
+                    else {
+                        szClearCmd = szClearCmd + String.format(" mount|grep -q /%s && umount /%s\n", szNameFolder, szNameFolder);
+                    }
+
                     szClearCmd = szClearCmd +"# dump data\n";
                     szClearCmd = szClearCmd + String.format("dd if=%s of=/data/HW-IMG/%s.img \n", objProcPart[i].getPname(), objProcPart[i].getName());
                     szClearCmd = szClearCmd +"\n";
@@ -288,7 +303,7 @@ public class ProcessFileGPT
                     bStart = true;
                     bAB = false;
                 }
-                if (szPartName.equals("system_a")) {
+                if (szPartName.equals("system_a") || szPartName.equals("system_b")) {
                     bStart = true;
                     bAB = true;
                 }

@@ -1,5 +1,6 @@
 echo "HWGSIPartition - Part 5/5
  
+fastboot flash system .\HW-IMG\system.img  
 fastboot flash preas .\HW-IMG\preas.img  
 fastboot flash preavs .\HW-IMG\preavs.img  
 fastboot flash cust .\HW-IMG\cust.img  
