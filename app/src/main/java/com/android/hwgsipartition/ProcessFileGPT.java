@@ -127,17 +127,38 @@ public class ProcessFileGPT
     }
 
 
+    //#push files
+    //adb push ./HW-IMG/reserved5.img /data/HW-IMG/reserved5.img
+
+    //#flashing at twrp
+    //dd if=/data/HW-IMG/reserved5.img of=/dev/block/by-name/reserved5
+
+
     public String GeneratedScriptRestore() {
         String szClearCmd="";
 
         szClearCmd = szClearCmd +"echo \"HWGSIPartition - Part 5/5\n";
-        szClearCmd = szClearCmd +" \n";
+        szClearCmd = szClearCmd +"\n";
         if (iNbProcPart>1) {
+            szClearCmd = szClearCmd + "REM Push file\n";
+            szClearCmd = szClearCmd + "adb shell \"mkdir /data/HW-IMG/\"\n";
+            szClearCmd = szClearCmd + "\n";
             for (int i = 0; i < iNbProcPart; i++) {
                 if (!objProcPart[i].getName().equals("userdata") ) {
-                    szClearCmd = szClearCmd + String.format("fastboot flash %s .\\HW-IMG\\%s.img  \n", objProcPart[i].getName(),objProcPart[i].getName());
+                    szClearCmd = szClearCmd + String.format("adb push ./HW-IMG/%s.img /data/HW-IMG/%s.img\n", objProcPart[i].getName(),objProcPart[i].getName());
                 }
             }
+            szClearCmd = szClearCmd + "\n";
+            szClearCmd = szClearCmd + "REM Flash partition\n";
+            for (int i = 0; i < iNbProcPart; i++) {
+                if (!objProcPart[i].getName().equals("userdata") ) {
+                    szClearCmd = szClearCmd + String.format("dd if=/data/HW-IMG/%s.img of=/dev/block/by-name/%s \n", objProcPart[i].getName(),objProcPart[i].getName());
+                }
+            }
+
+            szClearCmd = szClearCmd + "\n";
+            szClearCmd = szClearCmd + "pause \"Start system ?\" \n";
+            szClearCmd = szClearCmd + "adb reboot system\n";
         }
         Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
 

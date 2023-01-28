@@ -1,6 +1,6 @@
 ############################################################
 #
-#   Huawei GSI Partition kit - Version 0.6
+#   Huawei GSI Partition kit - Version 0.62
 #   Par Iceows
 #
 ############################################################

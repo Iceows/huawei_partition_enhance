@@ -1,9 +1,9 @@
-################################################# ##########
+###########################################################
 #
-# Huawei GSI Partition kit - Version 0.5
+# Huawei GSI Partition kit - Version 0.62
 # By Iceows
 #
-################################################# ##########
+###########################################################
 
 0) Hacer una copia de seguridad /data (De la particion entera, porque se formateara)
 

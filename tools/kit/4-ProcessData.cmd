@@ -34,9 +34,11 @@ adb shell "cd /tmp;./formatpart.sh"
 REM Copy flash cmd
 copy .\HW\5-FlashIMG.cmd
 
-pause "Reboot to bootloader ?"
-
+REM Flash userdata with fastboot
+pause "Reboot to bootloader ?" 
 adb reboot bootloader
 fastboot flash userdata ./userdata/userdata-huawei.img
 
-echo "You can now start 5-FlashIMG.cmd"
+pause "Please reboot to twrp and lunch 5-FlashIMG.cmd" 
+
+
