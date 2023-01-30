@@ -2,7 +2,6 @@ package com.android.hwgsipartition;
 
 import android.util.Log;
 import android.os.Environment;
-import androidx.core.content.FileProvider;
 
 
 import java.io.*;

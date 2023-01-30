@@ -257,13 +257,17 @@ public class MainActivity extends AppCompatActivity {
         szCmd = objProcess.GeneratedScriptFormat();
         writeToStorage(3, szCmd);
 
-        // Genere le fichier pour creer les partitions
-        szCmd = objProcess.GeneratedScriptBackup();
+        // Genere le fichier sh pour sauvegarder les partitions
+        szCmd = objProcess.GeneratedScriptDDBackup();
         writeToStorage(4, szCmd);
 
-        // Genere le fichier pour creer les partitions
+        // Genere le fichier cmd pour restorer les partitions
         szCmd = objProcess.GeneratedScriptRestore();
         writeToStorage(5, szCmd);
+
+        // Genere le fichier sh pour restorer les partitions
+        szCmd = objProcess.GeneratedScriptDDRestore();
+        writeToStorage(6, szCmd);
 
         Toast.makeText(this, "Les scripts ont été générés avec succés", Toast.LENGTH_SHORT).show();
 
@@ -306,6 +310,8 @@ public class MainActivity extends AppCompatActivity {
             objReadWrite.WriteGPTScript(directory.toString(),"backup.sh", szCmd);
         if (i==5)
             objReadWrite.WriteGPTScript(directory.toString(),"5-FlashIMG.cmd", szCmd);
+        if (i==6)
+            objReadWrite.WriteGPTScript(directory.toString(),"restore.sh", szCmd);
         return false;
     }
 

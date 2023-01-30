@@ -2,9 +2,7 @@ package com.android.hwgsipartition;
 
 import android.util.Log;
 
-import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -62,7 +60,7 @@ public class ProcessFileGPT
         iNbFullPart=KeepFullPart(sMyInitialGPT,sMyPartition);
 
         if (iNbFullPart>0) {
-            Log.println(Log.INFO, "ReadGPT", "iNbFullPart > 0 : " + String.valueOf(iNbFullPart));
+            Log.println(Log.INFO, "ReadGPT", "iNbFullPart > 0 : " + iNbFullPart);
 
             // System size - size of sector = 512 bytes or 4096 (UFS)
             if (iSize==0)
@@ -82,14 +80,12 @@ public class ProcessFileGPT
 
             iNbModPart=KeepModPart();
             if (iNbModPart>0) {
-                Log.println(Log.INFO, "ReadGPT", "iNbModPart > 0 :" + String.valueOf(iNbModPart));
+                Log.println(Log.INFO, "ReadGPT", "iNbModPart > 0 :" + iNbModPart);
                 if (iNbModPart<3)
                     return false;
                 iNbProcPart=KeepProcPart((int)iNewSystemSize);
-                Log.println(Log.INFO, "ReadGPT", "iNbProcPart :" + String.valueOf(iNbProcPart));
-                if (iNbProcPart==iNbModPart) {
-                    return true;
-                }
+                Log.println(Log.INFO, "ReadGPT", "iNbProcPart :" + iNbProcPart);
+                return iNbProcPart == iNbModPart;
             }
         }
         return false;
@@ -132,12 +128,32 @@ public class ProcessFileGPT
 
     //#flashing at twrp
     //dd if=/data/HW-IMG/reserved5.img of=/dev/block/by-name/reserved5
+    public String GeneratedScriptDDRestore() {
+        String szClearCmd="";
 
+        szClearCmd = szClearCmd +"#!/sbin/sh\n";
+        szClearCmd = szClearCmd +"\n";
+        for (int i = 0; i < iNbProcPart; i++) {
+            if (!objProcPart[i].getName().equals("userdata") ) {
+                szClearCmd = szClearCmd +"# restore data\n";
+                szClearCmd = szClearCmd + String.format("dd if=/data/HW-IMG/%s.img of=%s bs=4096\n", objProcPart[i].getName(),objProcPart[i].getPname());
+                szClearCmd = szClearCmd +"\n";
+            }
+        }
+
+        szClearCmd = szClearCmd + "\n";
+        Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
+
+        return szClearCmd;
+    }
 
     public String GeneratedScriptRestore() {
         String szClearCmd="";
 
         szClearCmd = szClearCmd +"echo \"HWGSIPartition - Part 5/5\n";
+        szClearCmd = szClearCmd +"REM enable root\n";
+        szClearCmd = szClearCmd +"adb root\n";
+
         szClearCmd = szClearCmd +"\n";
         if (iNbProcPart>1) {
             szClearCmd = szClearCmd + "REM Push file\n";
@@ -149,13 +165,11 @@ public class ProcessFileGPT
                 }
             }
             szClearCmd = szClearCmd + "\n";
-            szClearCmd = szClearCmd + "REM Flash partition\n";
-            for (int i = 0; i < iNbProcPart; i++) {
-                if (!objProcPart[i].getName().equals("userdata") ) {
-                    szClearCmd = szClearCmd + String.format("dd if=/data/HW-IMG/%s.img of=/dev/block/by-name/%s \n", objProcPart[i].getName(),objProcPart[i].getName());
-                }
-            }
-
+            szClearCmd = szClearCmd + "adb push \".\\HW\\restore.sh\" /tmp/restore.sh\n";
+            szClearCmd = szClearCmd + "adb shell \"cd /tmp;chmod 775 restore.sh\"\n";
+            szClearCmd = szClearCmd + "\n";
+            szClearCmd = szClearCmd + "pause \"Start restore..please wait it is a long operation (several minutes) ?\" \n";
+            szClearCmd = szClearCmd + "adb shell \"cd /tmp;./restore.sh\"\n";
             szClearCmd = szClearCmd + "\n";
             szClearCmd = szClearCmd + "pause \"Start system ?\" \n";
             szClearCmd = szClearCmd + "adb reboot system\n";
@@ -192,7 +206,7 @@ public class ProcessFileGPT
 
     //dd if=/dev/block/mmcblk0p51 of=/sdcard/preas.img
     //dd if=/dev/block/mmcblk0p52 of=/sdcard/preavs.img
-    public String GeneratedScriptBackup() {
+    public String GeneratedScriptDDBackup() {
         String szClearCmd = "";
 
         szClearCmd = szClearCmd +"#!/sbin/sh\n";
@@ -210,7 +224,7 @@ public class ProcessFileGPT
             for (int i = 0; i < iNbProcPart; i++) {
                 // don't backup system or userdata
                 if (!objProcPart[i].getName().equals("userdata")) {
-                    String szNameFolder="";
+                    String szNameFolder;
 
                     // replace system_a or _b by system
                     if (objProcPart[i].getName().equals("system") ||
@@ -233,7 +247,7 @@ public class ProcessFileGPT
                     }
 
                     szClearCmd = szClearCmd +"# dump data\n";
-                    szClearCmd = szClearCmd + String.format("dd if=%s of=/data/HW-IMG/%s.img \n", objProcPart[i].getPname(), objProcPart[i].getName());
+                    szClearCmd = szClearCmd + String.format("dd if=%s of=/data/HW-IMG/%s.img bs=4096 \n", objProcPart[i].getPname(), objProcPart[i].getName());
                     szClearCmd = szClearCmd +"\n";
                 }
             }
@@ -265,7 +279,7 @@ public class ProcessFileGPT
 
     public int KeepProcPart(int iNewSystemSize ) {
         int iCurrentItem=0;
-        int iNewStartSector=0;
+        int iNewStartSector;
         int iNewEndSector=0;
         int iNewNbSector=0;
         int iOldNbSector=0;
