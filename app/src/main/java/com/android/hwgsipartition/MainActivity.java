@@ -264,6 +264,9 @@ public class MainActivity extends AppCompatActivity {
         // Genere le fichier cmd pour restorer les partitions
         szCmd = objProcess.GeneratedScriptRestore();
         writeToStorage(5, szCmd);
+        // Genere le fichier cmd pour restorer les partitions - linux version
+        szCmd = objProcess.GeneratedScriptRestoreSH();
+        writeToStorage(7, szCmd);
 
         // Genere le fichier sh pour restorer les partitions
         szCmd = objProcess.GeneratedScriptDDRestore();
@@ -312,6 +315,8 @@ public class MainActivity extends AppCompatActivity {
             objReadWrite.WriteGPTScript(directory.toString(),"5-FlashIMG.cmd", szCmd);
         if (i==6)
             objReadWrite.WriteGPTScript(directory.toString(),"restore.sh", szCmd);
+        if (i==7)
+            objReadWrite.WriteGPTScript(directory.toString(),"5-FlashIMG.sh", szCmd);
         return false;
     }
 

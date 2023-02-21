@@ -19,7 +19,7 @@
 	Cliquer sur Refactor GPT
 	Vous dever avoir apparaitre a l'ecran les infos de partitions 
 	Fermer HWGSIPartition
-6) Recuperer les fichiers générés par le programme HWGSIPartition et vérifier que vous avez bien un repertoire HW désormais avec 8 fichiers.
+6) Recuperer les fichiers générés par le programme HWGSIPartition et vérifier que vous avez bien un repertoire HW désormais avec 10 fichiers.
 	3-GetIMG.cmd
 7) Démarrer sous TWRP. Vérifier que votre partition data est bien montée
 8) Executer le script qui va retailler les partitions

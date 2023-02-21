@@ -19,7 +19,7 @@
 	Segundo paso toca en  GPT Refactor
 	Ahora deberia aparecerte la informacion de la particion en la pantalla
 	Cierra el programa HWGSIPartition
-6) Ahora recuperaremos los archivos que generamos con el programa HWGSIPartition,  y veremos que tienes en el directorio HW  now deberia tener 8 archivos. Ejecutaremos el:
+6) Ahora recuperaremos los archivos que generamos con el programa HWGSIPartition,  y veremos que tienes en el directorio HW  now deberia tener 10 archivos. Ejecutaremos el:
 	3-GetIMG.cmd
 7) Bootea TWRP. Verifica que la particion /data esta montada correctamente
 8) Ejecuremos el siguiente script, el cual redimensionara las particiones

@@ -147,6 +147,42 @@ public class ProcessFileGPT
         return szClearCmd;
     }
 
+    public String GeneratedScriptRestoreSH() {
+        String szClearCmd="";
+
+        szClearCmd = szClearCmd +"#!/sbin/sh\n";
+        szClearCmd = szClearCmd +"\n";
+        szClearCmd = szClearCmd +"adb root\n";
+
+        szClearCmd = szClearCmd +"\n";
+        if (iNbProcPart>1) {
+            szClearCmd = szClearCmd + "# Push file\n";
+            szClearCmd = szClearCmd + "adb shell \"mkdir /data/HW-IMG/\"\n";
+            szClearCmd = szClearCmd + "\n";
+            for (int i = 0; i < iNbProcPart; i++) {
+                if (!objProcPart[i].getName().equals("userdata") ) {
+                    szClearCmd = szClearCmd + String.format("adb push ./HW-IMG/%s.img /data/HW-IMG/%s.img\n", objProcPart[i].getName(),objProcPart[i].getName());
+                }
+            }
+            szClearCmd = szClearCmd + "\n";
+            szClearCmd = szClearCmd + "adb push \".\\HW\\restore.sh\" /tmp/restore.sh\n";
+            szClearCmd = szClearCmd + "adb shell \"cd /tmp;chmod 775 restore.sh\"\n";
+            szClearCmd = szClearCmd + "\n";
+            szClearCmd = szClearCmd + "echo \"Start restore..please wait it is a long operation (several minutes) ?\" \n";
+            szClearCmd = szClearCmd + "read a\n";
+            szClearCmd = szClearCmd + "adb shell \"cd /tmp;./restore.sh\"\n";
+            szClearCmd = szClearCmd + "\n";
+            szClearCmd = szClearCmd + "echo \"Start system ?\" \n";
+            szClearCmd = szClearCmd + "read b\n";
+            szClearCmd = szClearCmd + "adb reboot system\n";
+        }
+
+        szClearCmd = szClearCmd + "\n";
+        Log.println(Log.INFO, "ReadGPT", "  " + szClearCmd);
+
+        return szClearCmd;
+    }
+
     public String GeneratedScriptRestore() {
         String szClearCmd="";
 
@@ -191,7 +227,7 @@ public class ProcessFileGPT
                 if ((objProcPart[i].getTypeFs().equals("ext2")) || (objProcPart[i].getTypeFs().equals("ext4")))
                     szClearCmd = szClearCmd + String.format("/sbin/mke2fs -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
                 if (objProcPart[i].getTypeFs().equals("f2fs")) {
-                    szClearCmd = szClearCmd + String.format("/tmp/mkfs.f2fs -l data %s\n", objProcPart[i].getPname());
+                    szClearCmd = szClearCmd + String.format("/tmp/mkfs.f2fs -O encrypt -O verity -O quota %s\n", objProcPart[i].getPname());
                     szClearCmd = szClearCmd + String.format("/tmp/fsck.f2fs %s\n", objProcPart[i].getPname());
                 }
                 //if (objProcPart[i].getTypeFs().equals(""))
