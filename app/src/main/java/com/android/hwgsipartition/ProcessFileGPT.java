@@ -224,8 +224,9 @@ public class ProcessFileGPT
         szClearCmd = szClearCmd +" \n";
         if (iNbProcPart>1) {
             for (int i = 0; i < iNbProcPart; i++) {
-                if ((objProcPart[i].getTypeFs().equals("ext2")) || (objProcPart[i].getTypeFs().equals("ext4")))
-                    szClearCmd = szClearCmd + String.format("/sbin/mke2fs -t %s %s\n", objProcPart[i].getTypeFs(),objProcPart[i].getPname());
+                if ((objProcPart[i].getTypeFs().equals("ext2")) || (objProcPart[i].getTypeFs().equals("ext4"))) {
+                    szClearCmd = szClearCmd + String.format("/sbin/mke2fs -t %s %s\n", objProcPart[i].getTypeFs(), objProcPart[i].getPname());
+                }
                 if (objProcPart[i].getTypeFs().equals("f2fs")) {
                     szClearCmd = szClearCmd + String.format("/tmp/mkfs.f2fs -O encrypt -O verity -O quota %s\n", objProcPart[i].getPname());
                     szClearCmd = szClearCmd + String.format("/tmp/fsck.f2fs %s\n", objProcPart[i].getPname());
