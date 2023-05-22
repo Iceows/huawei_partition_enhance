@@ -16,3 +16,4 @@ build
 /sdk/platform-tools/
 /sdk/platforms/
 /sdk/build-tools/
+*.img
